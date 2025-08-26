@@ -1,0 +1,302 @@
+{% extends 'base.html' %}
+
+{% block title %}Configuración General - ZivaBSuite{% endblock %}
+
+{% block content %}
+<div class="py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl">
+                        <i class="fas fa-sliders-h text-orange-600 mr-3"></i>Configuración General
+                    </h2>
+                    <p class="mt-1 text-sm text-gray-500">
+                        Preferencias generales del sistema - {{ empresa_actual }}
+                    </p>
+                </div>
+                <div>
+                    <a href="{% url 'configuracion' %}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                        <i class="fas fa-arrow-left mr-2"></i>Volver
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="mb-4 rounded-md {% if message.tags == 'success' %}bg-green-50 border border-green-200{% else %}bg-red-50 border border-red-200{% endif %} p-4">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            {% if message.tags == 'success' %}
+                                <i class="fas fa-check-circle text-green-400"></i>
+                            {% else %}
+                                <i class="fas fa-exclamation-circle text-red-400"></i>
+                            {% endif %}
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm {% if message.tags == 'success' %}text-green-700{% else %}text-red-700{% endif %}">
+                                {{ message }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Form -->
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Configuraciones de Moneda -->
+            <div class="bg-white shadow rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                        <i class="fas fa-dollar-sign text-green-600 mr-2"></i>
+                        Configuración de Moneda
+                    </h3>
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+                        <div>
+                            <label for="moneda_principal" class="block text-sm font-medium text-gray-700">Moneda Principal</label>
+                            <select id="moneda_principal" name="moneda_principal" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="MXN" {% if config_general.moneda_principal == 'MXN' %}selected{% endif %}>MXN - Peso Mexicano</option>
+                                <option value="USD" {% if config_general.moneda_principal == 'USD' %}selected{% endif %}>USD - Dólar Estadounidense</option>
+                                <option value="EUR" {% if config_general.moneda_principal == 'EUR' %}selected{% endif %}>EUR - Euro</option>
+                                <option value="CAD" {% if config_general.moneda_principal == 'CAD' %}selected{% endif %}>CAD - Dólar Canadiense</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="simbolo_moneda" class="block text-sm font-medium text-gray-700">Símbolo</label>
+                            <input type="text" name="simbolo_moneda" id="simbolo_moneda" value="{{ config_general.simbolo_moneda }}" maxlength="5" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </div>
+                        <div>
+                            <label for="decimales_moneda" class="block text-sm font-medium text-gray-700">Decimales</label>
+                            <select id="decimales_moneda" name="decimales_moneda" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="0" {% if config_general.decimales_moneda == 0 %}selected{% endif %}>0</option>
+                                <option value="2" {% if config_general.decimales_moneda == 2 %}selected{% endif %}>2</option>
+                                <option value="4" {% if config_general.decimales_moneda == 4 %}selected{% endif %}>4</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuraciones de Formato -->
+            <div class="bg-white shadow rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                        <i class="fas fa-calendar-alt text-blue-600 mr-2"></i>
+                        Formatos de Fecha y Números
+                    </h3>
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+                        <div>
+                            <label for="formato_fecha" class="block text-sm font-medium text-gray-700">Formato de Fecha</label>
+                            <select id="formato_fecha" name="formato_fecha" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="DD/MM/YYYY" {% if config_general.formato_fecha == 'DD/MM/YYYY' %}selected{% endif %}>DD/MM/YYYY</option>
+                                <option value="MM/DD/YYYY" {% if config_general.formato_fecha == 'MM/DD/YYYY' %}selected{% endif %}>MM/DD/YYYY</option>
+                                <option value="YYYY-MM-DD" {% if config_general.formato_fecha == 'YYYY-MM-DD' %}selected{% endif %}>YYYY-MM-DD</option>
+                                <option value="DD-MM-YYYY" {% if config_general.formato_fecha == 'DD-MM-YYYY' %}selected{% endif %}>DD-MM-YYYY</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="separador_miles" class="block text-sm font-medium text-gray-700">Separador de Miles</label>
+                            <select id="separador_miles" name="separador_miles" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="," {% if config_general.separador_miles == ',' %}selected{% endif %}>Coma (,)</option>
+                                <option value="." {% if config_general.separador_miles == '.' %}selected{% endif %}>Punto (.)</option>
+                                <option value=" " {% if config_general.separador_miles == ' ' %}selected{% endif %}>Espacio ( )</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="separador_decimal" class="block text-sm font-medium text-gray-700">Separador Decimal</label>
+                            <select id="separador_decimal" name="separador_decimal" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="." {% if config_general.separador_decimal == '.' %}selected{% endif %}>Punto (.)</option>
+                                <option value="," {% if config_general.separador_decimal == ',' %}selected{% endif %}>Coma (,)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuración Regional -->
+            <div class="bg-white shadow rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                        <i class="fas fa-globe text-purple-600 mr-2"></i>
+                        Configuración Regional
+                    </h3>
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        <div>
+                            <label for="zona_horaria" class="block text-sm font-medium text-gray-700">Zona Horaria</label>
+                            <select id="zona_horaria" name="zona_horaria" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                {% for valor, nombre in zonas_horaria %}
+                                    <option value="{{ valor }}" {% if config_general.zona_horaria == valor %}selected{% endif %}>{{ nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label for="idioma" class="block text-sm font-medium text-gray-700">Idioma</label>
+                            <select id="idioma" name="idioma" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="es" {% if config_general.idioma == 'es' %}selected{% endif %}>Español</option>
+                                <option value="en" {% if config_general.idioma == 'en' %}selected{% endif %}>English</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notificaciones -->
+            <div class="bg-white shadow rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                        <i class="fas fa-bell text-yellow-600 mr-2"></i>
+                        Configuración de Notificaciones
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="flex items-center h-5">
+                                <input id="notificaciones_email" name="notificaciones_email" type="checkbox" {% if config_general.notificaciones_email %}checked{% endif %} class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <label for="notificaciones_email" class="font-medium text-gray-700">Notificaciones por Email</label>
+                                <p class="text-gray-500">Recibir notificaciones importantes por correo electrónico</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex items-center h-5">
+                                <input id="notificaciones_sistema" name="notificaciones_sistema" type="checkbox" {% if config_general.notificaciones_sistema %}checked{% endif %} class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <label for="notificaciones_sistema" class="font-medium text-gray-700">Notificaciones del Sistema</label>
+                                <p class="text-gray-500">Mostrar notificaciones en la interfaz del sistema</p>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="email_notificaciones" class="block text-sm font-medium text-gray-700">Email para Notificaciones</label>
+                            <input type="email" name="email_notificaciones" id="email_notificaciones" value="{{ config_general.email_notificaciones }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="email@ejemplo.com">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuración de Interfaz -->
+            <div class="bg-white shadow rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                        <i class="fas fa-palette text-pink-600 mr-2"></i>
+                        Configuración de Interfaz
+                    </h3>
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-1">
+                        <div>
+                            <label for="tema_interfaz" class="block text-sm font-medium text-gray-700">Tema de la Interfaz</label>
+                            <select id="tema_interfaz" name="tema_interfaz" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="light" {% if config_general.tema_interfaz == 'light' %}selected{% endif %}>Claro</option>
+                                <option value="dark" {% if config_general.tema_interfaz == 'dark' %}selected{% endif %}>Oscuro</option>
+                                <option value="auto" {% if config_general.tema_interfaz == 'auto' %}selected{% endif %}>Automático</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Período Contable -->
+            <div class="bg-white shadow rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                        <i class="fas fa-calendar-check text-indigo-600 mr-2"></i>
+                        Ejercicio Fiscal
+                    </h3>
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        <div>
+                            <label for="inicio_ejercicio_fiscal" class="block text-sm font-medium text-gray-700">Inicio del Ejercicio</label>
+                            <input type="text" name="inicio_ejercicio_fiscal" id="inicio_ejercicio_fiscal" value="{{ config_general.inicio_ejercicio_fiscal }}" pattern="\d{2}-\d{2}" placeholder="MM-DD" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <p class="mt-1 text-xs text-gray-500">Formato: MM-DD (ej: 01-01)</p>
+                        </div>
+                        <div>
+                            <label for="fin_ejercicio_fiscal" class="block text-sm font-medium text-gray-700">Fin del Ejercicio</label>
+                            <input type="text" name="fin_ejercicio_fiscal" id="fin_ejercicio_fiscal" value="{{ config_general.fin_ejercicio_fiscal }}" pattern="\d{2}-\d{2}" placeholder="MM-DD" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <p class="mt-1 text-xs text-gray-500">Formato: MM-DD (ej: 12-31)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Respaldos -->
+            <div class="bg-white shadow rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                        <i class="fas fa-shield-alt text-gray-600 mr-2"></i>
+                        Configuración de Respaldos
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="flex items-center h-5">
+                                <input id="backup_automatico" name="backup_automatico" type="checkbox" {% if config_general.backup_automatico %}checked{% endif %} class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <label for="backup_automatico" class="font-medium text-gray-700">Respaldo Automático</label>
+                                <p class="text-gray-500">Generar respaldos de datos automáticamente</p>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="frecuencia_backup" class="block text-sm font-medium text-gray-700">Frecuencia de Respaldo</label>
+                            <select id="frecuencia_backup" name="frecuencia_backup" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="daily" {% if config_general.frecuencia_backup == 'daily' %}selected{% endif %}>Diario</option>
+                                <option value="weekly" {% if config_general.frecuencia_backup == 'weekly' %}selected{% endif %}>Semanal</option>
+                                <option value="monthly" {% if config_general.frecuencia_backup == 'monthly' %}selected{% endif %}>Mensual</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-end space-x-3">
+                <button type="button" onclick="resetForm()" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <i class="fas fa-undo mr-2"></i>Restablecer
+                </button>
+                <button type="submit" class="bg-indigo-600 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <i class="fas fa-save mr-2"></i>Guardar Configuración
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function resetForm() {
+    if (confirm('¿Está seguro de que desea restablecer todos los cambios?')) {
+        document.querySelector('form').reset();
+    }
+}
+
+// Auto-actualizar símbolo de moneda basado en selección
+document.getElementById('moneda_principal').addEventListener('change', function() {
+    const simbolos = {
+        'MXN': '$',
+        'USD': '$',
+        'EUR': '€',
+        'CAD': 'C$'
+    };
+    document.getElementById('simbolo_moneda').value = simbolos[this.value] || '$';
+});
+
+// Validación de formato de fecha
+document.getElementById('inicio_ejercicio_fiscal').addEventListener('blur', function() {
+    if (!this.value.match(/^\d{2}-\d{2}$/)) {
+        this.setCustomValidity('Formato debe ser MM-DD (ej: 01-01)');
+    } else {
+        this.setCustomValidity('');
+    }
+});
+
+document.getElementById('fin_ejercicio_fiscal').addEventListener('blur', function() {
+    if (!this.value.match(/^\d{2}-\d{2}$/)) {
+        this.setCustomValidity('Formato debe ser MM-DD (ej: 12-31)');
+    } else {
+        this.setCustomValidity('');
+    }
+});
+</script>
+{% endblock %}

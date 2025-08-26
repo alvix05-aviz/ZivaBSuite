@@ -1,0 +1,1312 @@
+{% extends 'base.html' %}
+
+{% block title %}Reportes - ZivaBSuite{% endblock %}
+
+{% block content %}
+<div class="py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl">
+                Reportes Financieros
+            </h2>
+            <p class="mt-1 text-sm text-gray-500">
+                Genera y exporta reportes contables de {{ empresa_actual }}
+            </p>
+        </div>
+        
+        <!-- Report Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- Balanza de Comprobación -->
+            <div class="bg-white overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="rounded-full bg-blue-100 p-3">
+                            <i class="fas fa-balance-scale text-blue-600 text-2xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Balanza de Comprobación</h3>
+                            <p class="text-sm text-gray-500">Saldos de todas las cuentas</p>
+                        </div>
+                    </div>
+                    <div class="border-t pt-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <label class="text-sm text-gray-600">Fecha de corte:</label>
+                            <input type="date" id="fecha_balanza" class="text-sm rounded border-gray-300" value="{{ fecha_hoy }}">
+                        </div>
+                        <button onclick="generarBalanza()" class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">
+                            <i class="fas fa-eye mr-2"></i>Ver Reporte
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Estado de Resultados -->
+            <div class="bg-white overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="rounded-full bg-green-100 p-3">
+                            <i class="fas fa-chart-line text-green-600 text-2xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Estado de Resultados</h3>
+                            <p class="text-sm text-gray-500">Ingresos, costos y utilidad</p>
+                        </div>
+                    </div>
+                    <div class="border-t pt-4">
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                            <div>
+                                <label class="text-xs text-gray-600">Desde:</label>
+                                <input type="date" id="desde_resultados" class="text-sm rounded border-gray-300 w-full">
+                            </div>
+                            <div>
+                                <label class="text-xs text-gray-600">Hasta:</label>
+                                <input type="date" id="hasta_resultados" class="text-sm rounded border-gray-300 w-full">
+                            </div>
+                        </div>
+                        <button onclick="generarEstadoResultados()" class="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition">
+                            <i class="fas fa-eye mr-2"></i>Ver Reporte
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Balance General -->
+            <div class="bg-white overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="rounded-full bg-purple-100 p-3">
+                            <i class="fas fa-building text-purple-600 text-2xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Balance General</h3>
+                            <p class="text-sm text-gray-500">Situación financiera</p>
+                        </div>
+                    </div>
+                    <div class="border-t pt-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <label class="text-sm text-gray-600">Fecha de corte:</label>
+                            <input type="date" id="fecha_balance" class="text-sm rounded border-gray-300" value="{{ fecha_hoy }}">
+                        </div>
+                        <button onclick="generarBalance()" class="w-full bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700 transition">
+                            <i class="fas fa-eye mr-2"></i>Ver Reporte
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Libro Diario -->
+            <div class="bg-white overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="rounded-full bg-indigo-100 p-3">
+                            <i class="fas fa-book text-indigo-600 text-2xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Libro Diario</h3>
+                            <p class="text-sm text-gray-500">Detalle de transacciones</p>
+                        </div>
+                    </div>
+                    <div class="border-t pt-4">
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                            <div>
+                                <label class="text-xs text-gray-600">Desde:</label>
+                                <input type="date" id="desde_diario" class="text-sm rounded border-gray-300 w-full">
+                            </div>
+                            <div>
+                                <label class="text-xs text-gray-600">Hasta:</label>
+                                <input type="date" id="hasta_diario" class="text-sm rounded border-gray-300 w-full">
+                            </div>
+                        </div>
+                        <button onclick="generarLibroDiario()" class="w-full bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition">
+                            <i class="fas fa-eye mr-2"></i>Ver Reporte
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Libro Mayor -->
+            <div class="bg-white overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="rounded-full bg-yellow-100 p-3">
+                            <i class="fas fa-book-open text-yellow-600 text-2xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Libro Mayor</h3>
+                            <p class="text-sm text-gray-500">Movimientos por cuenta</p>
+                        </div>
+                    </div>
+                    <div class="border-t pt-4">
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                            <div>
+                                <label class="text-xs text-gray-600">Desde:</label>
+                                <input type="date" id="desde_mayor" class="text-sm rounded border-gray-300 w-full">
+                            </div>
+                            <div>
+                                <label class="text-xs text-gray-600">Hasta:</label>
+                                <input type="date" id="hasta_mayor" class="text-sm rounded border-gray-300 w-full">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-sm text-gray-600">Seleccionar cuenta:</label>
+                            <select id="cuenta_mayor" class="w-full text-sm rounded border-gray-300 mt-1">
+                                <option value="todas">Todas las cuentas</option>
+                            </select>
+                        </div>
+                        <button onclick="generarLibroMayor()" class="w-full bg-yellow-600 text-white py-2 px-4 rounded hover:bg-yellow-700 transition">
+                            <i class="fas fa-eye mr-2"></i>Ver Reporte
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Flujo de Efectivo -->
+            <div class="bg-white overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="rounded-full bg-red-100 p-3">
+                            <i class="fas fa-money-bill-wave text-red-600 text-2xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Flujo de Efectivo</h3>
+                            <p class="text-sm text-gray-500">Entradas y salidas de dinero</p>
+                        </div>
+                    </div>
+                    <div class="border-t pt-4">
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                            <div>
+                                <label class="text-xs text-gray-600">Desde:</label>
+                                <input type="date" id="desde_flujo" class="text-sm rounded border-gray-300 w-full">
+                            </div>
+                            <div>
+                                <label class="text-xs text-gray-600">Hasta:</label>
+                                <input type="date" id="hasta_flujo" class="text-sm rounded border-gray-300 w-full">
+                            </div>
+                        </div>
+                        <button onclick="generarFlujo()" class="w-full bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition">
+                            <i class="fas fa-eye mr-2"></i>Ver Reporte
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Reporte por Centros de Costo -->
+            <div class="bg-white overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="rounded-full bg-orange-100 p-3">
+                            <i class="fas fa-sitemap text-orange-600 text-2xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Centros de Costo</h3>
+                            <p class="text-sm text-gray-500">Análisis por centro y proyecto</p>
+                        </div>
+                    </div>
+                    <div class="border-t pt-4">
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                            <div>
+                                <label class="text-xs text-gray-600">Desde:</label>
+                                <input type="date" id="desde_centros" class="text-sm rounded border-gray-300 w-full">
+                            </div>
+                            <div>
+                                <label class="text-xs text-gray-600">Hasta:</label>
+                                <input type="date" id="hasta_centros" class="text-sm rounded border-gray-300 w-full">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-sm text-gray-600">Centro específico:</label>
+                            <select id="centro_reporte" class="w-full text-sm rounded border-gray-300 mt-1">
+                                <option value="todos">Todos los centros</option>
+                                {% for centro in centros_costo %}
+                                <option value="{{ centro.id }}">{{ centro.codigo }} - {{ centro.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button onclick="generarReporteCentros()" class="w-full bg-orange-600 text-white py-2 px-4 rounded hover:bg-orange-700 transition">
+                            <i class="fas fa-eye mr-2"></i>Ver Reporte
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+        <!-- Report Display Area -->
+        <div id="report-display" class="mt-8 bg-white rounded-lg shadow hidden">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h3 id="report-title" class="text-lg font-semibold text-gray-900">
+                    Reporte
+                </h3>
+                <div class="flex space-x-2">
+                    <button onclick="exportarReporte('pdf')" class="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded text-white bg-red-600 hover:bg-red-700">
+                        <i class="fas fa-file-pdf mr-1"></i>PDF
+                    </button>
+                    <button onclick="exportarReporte('excel')" class="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded text-white bg-green-600 hover:bg-green-700">
+                        <i class="fas fa-file-excel mr-1"></i>Excel
+                    </button>
+                    <button onclick="exportarReporte('csv')" class="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded text-white bg-blue-600 hover:bg-blue-700">
+                        <i class="fas fa-file-csv mr-1"></i>CSV
+                    </button>
+                    <button onclick="cerrarReporte()" class="inline-flex items-center px-3 py-1 border border-gray-300 text-sm font-medium rounded text-gray-700 bg-white hover:bg-gray-50">
+                        <i class="fas fa-times mr-1"></i>Cerrar
+                    </button>
+                </div>
+            </div>
+            <div id="report-content" class="p-6">
+                <!-- Report content will be loaded here -->
+            </div>
+        </div>
+        
+        <!-- Export Options -->
+        <div class="mt-8 bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-cog mr-2"></i>Opciones de Exportación
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="flex items-center">
+                    <input type="radio" name="formato" value="pdf" checked class="text-indigo-600">
+                    <label class="ml-2 text-sm text-gray-700">
+                        <i class="fas fa-file-pdf text-red-500 mr-1"></i>PDF
+                    </label>
+                </div>
+                <div class="flex items-center">
+                    <input type="radio" name="formato" value="excel" class="text-indigo-600">
+                    <label class="ml-2 text-sm text-gray-700">
+                        <i class="fas fa-file-excel text-green-500 mr-1"></i>Excel
+                    </label>
+                </div>
+                <div class="flex items-center">
+                    <input type="radio" name="formato" value="csv" class="text-indigo-600">
+                    <label class="ml-2 text-sm text-gray-700">
+                        <i class="fas fa-file-csv text-blue-500 mr-1"></i>CSV
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Reports -->
+        <div class="mt-8 bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">
+                    <i class="fas fa-history mr-2"></i>Reportes Recientes
+                </h3>
+            </div>
+            <div class="p-6">
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
+                        <div class="flex items-center">
+                            <i class="fas fa-file-pdf text-red-500 mr-3"></i>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">Balance General - Agosto 2024</p>
+                                <p class="text-xs text-gray-500">Generado hace 2 días</p>
+                            </div>
+                        </div>
+                        <button class="text-indigo-600 hover:text-indigo-900">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
+                        <div class="flex items-center">
+                            <i class="fas fa-file-excel text-green-500 mr-3"></i>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">Estado de Resultados - Q2 2024</p>
+                                <p class="text-xs text-gray-500">Generado hace 1 semana</p>
+                            </div>
+                        </div>
+                        <button class="text-indigo-600 hover:text-indigo-900">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Global variables for current report
+let currentReportData = null;
+let currentReportType = null;
+let currentReportParams = null;
+
+// Set today's date as default
+document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('fecha_balanza').value = today;
+    document.getElementById('fecha_balance').value = today;
+    document.getElementById('hasta_resultados').value = today;
+    document.getElementById('hasta_diario').value = today;
+    document.getElementById('hasta_mayor').value = today;
+    document.getElementById('hasta_flujo').value = today;
+    
+    // Set first day of month for "desde" fields
+    const firstDay = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
+    document.getElementById('desde_resultados').value = firstDay;
+    document.getElementById('desde_diario').value = firstDay;
+    document.getElementById('desde_mayor').value = firstDay;
+    document.getElementById('desde_flujo').value = firstDay;
+    
+    // Load accounts for Libro Mayor selector
+    cargarCuentasLibroMayor();
+});
+
+async function generarBalanza() {
+    const fecha = document.getElementById('fecha_balanza').value;
+    
+    if (!fecha) {
+        alert('Por favor selecciona una fecha');
+        return;
+    }
+    
+    mostrarCargando('Cargando Balanza de Comprobación...');
+    
+    try {
+        const response = await fetch(`/api/reportes/reportes/balanza_comprobacion/?fecha=${fecha}`);
+        if (response.ok) {
+            const data = await response.json();
+            currentReportData = data;
+            currentReportType = 'balanza';
+            currentReportParams = { fecha };
+            mostrarReporteBalanza(data);
+        } else {
+            alert('Error al cargar el reporte');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error de conexión');
+    } finally {
+        ocultarCargando();
+    }
+}
+
+async function generarEstadoResultados() {
+    const desde = document.getElementById('desde_resultados').value;
+    const hasta = document.getElementById('hasta_resultados').value;
+    
+    if (!desde || !hasta) {
+        alert('Por favor selecciona el rango de fechas');
+        return;
+    }
+    
+    mostrarCargando('Cargando Estado de Resultados...');
+    
+    try {
+        const response = await fetch(`/api/reportes/reportes/estado_resultados/?fecha_inicio=${desde}&fecha_fin=${hasta}`);
+        if (response.ok) {
+            const data = await response.json();
+            currentReportData = data;
+            currentReportType = 'estado_resultados';
+            currentReportParams = { fecha_inicio: desde, fecha_fin: hasta };
+            mostrarReporteEstadoResultados(data);
+        } else {
+            alert('Error al cargar el reporte');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error de conexión');
+    } finally {
+        ocultarCargando();
+    }
+}
+
+async function generarBalance() {
+    const fecha = document.getElementById('fecha_balance').value;
+    
+    if (!fecha) {
+        alert('Por favor selecciona una fecha');
+        return;
+    }
+    
+    mostrarCargando('Cargando Balance General...');
+    
+    try {
+        const response = await fetch(`/api/reportes/reportes/balance_general/?fecha=${fecha}`);
+        if (response.ok) {
+            const data = await response.json();
+            currentReportData = data;
+            currentReportType = 'balance_general';
+            currentReportParams = { fecha };
+            mostrarReporteBalanceGeneral(data);
+        } else {
+            alert('Error al cargar el reporte');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error de conexión');
+    } finally {
+        ocultarCargando();
+    }
+}
+
+async function generarLibroDiario() {
+    const desde = document.getElementById('desde_diario').value;
+    const hasta = document.getElementById('hasta_diario').value;
+    
+    if (!desde || !hasta) {
+        alert('Por favor selecciona el rango de fechas');
+        return;
+    }
+    
+    mostrarCargando('Cargando Libro Diario...');
+    
+    try {
+        const response = await fetch(`/api/reportes/reportes/libro_diario/?fecha_inicio=${desde}&fecha_fin=${hasta}`);
+        if (response.ok) {
+            const data = await response.json();
+            currentReportData = data;
+            currentReportType = 'libro_diario';
+            currentReportParams = { fecha_inicio: desde, fecha_fin: hasta };
+            mostrarReporteLibroDiario(data);
+        } else {
+            alert('Error al cargar el reporte');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error de conexión');
+    } finally {
+        ocultarCargando();
+    }
+}
+
+async function generarLibroMayor() {
+    const desde = document.getElementById('desde_mayor').value;
+    const hasta = document.getElementById('hasta_mayor').value;
+    const cuentaId = document.getElementById('cuenta_mayor').value;
+    
+    if (!desde || !hasta) {
+        alert('Por favor selecciona el rango de fechas');
+        return;
+    }
+    
+    mostrarCargando('Cargando Libro Mayor...');
+    
+    try {
+        let url = `/api/reportes/reportes/libro_mayor/?fecha_inicio=${desde}&fecha_fin=${hasta}`;
+        if (cuentaId && cuentaId !== 'todas') {
+            url += `&cuenta_id=${cuentaId}`;
+        }
+        
+        const response = await fetch(url);
+        if (response.ok) {
+            const data = await response.json();
+            currentReportData = data;
+            currentReportType = 'libro_mayor';
+            currentReportParams = { fecha_inicio: desde, fecha_fin: hasta };
+            if (cuentaId && cuentaId !== 'todas') {
+                currentReportParams.cuenta_id = cuentaId;
+            }
+            mostrarReporteLibroMayor(data);
+        } else {
+            alert('Error al cargar el reporte');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error de conexión');
+    } finally {
+        ocultarCargando();
+    }
+}
+
+async function generarFlujo() {
+    const desde = document.getElementById('desde_flujo').value;
+    const hasta = document.getElementById('hasta_flujo').value;
+    
+    if (!desde || !hasta) {
+        alert('Por favor selecciona el rango de fechas');
+        return;
+    }
+    
+    mostrarCargando('Cargando Flujo de Efectivo...');
+    
+    try {
+        const response = await fetch(`/api/reportes/reportes/flujo_efectivo/?fecha_inicio=${desde}&fecha_fin=${hasta}`);
+        if (response.ok) {
+            const data = await response.json();
+            currentReportData = data;
+            currentReportType = 'flujo_efectivo';
+            currentReportParams = { fecha_inicio: desde, fecha_fin: hasta };
+            mostrarReporteFlujoEfectivo(data);
+        } else {
+            alert('Error al cargar el reporte');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error de conexión');
+    } finally {
+        ocultarCargando();
+    }
+}
+
+// Display functions for each report type
+function mostrarReporteBalanza(data) {
+    document.getElementById('report-title').textContent = 'Balanza de Comprobación';
+    
+    let html = `
+        <div class="mb-4">
+            <h4 class="font-semibold text-lg">${data.empresa}</h4>
+            <p class="text-gray-600">Al ${new Date(data.fecha_corte).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Código</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cuenta</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Cargos</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Abonos</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Saldo Deudor</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Saldo Acreedor</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+    `;
+    
+    data.cuentas.forEach(cuenta => {
+        html += `
+            <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${cuenta.cuenta_codigo}</td>
+                <td class="px-6 py-4 text-sm text-gray-900">${cuenta.cuenta_nombre}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${cuenta.tipo}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">$${parseFloat(cuenta.cargos).toLocaleString('es-ES', {minimumFractionDigits: 2})}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">$${parseFloat(cuenta.abonos).toLocaleString('es-ES', {minimumFractionDigits: 2})}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">$${parseFloat(cuenta.saldo_deudor).toLocaleString('es-ES', {minimumFractionDigits: 2})}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">$${parseFloat(cuenta.saldo_acreedor).toLocaleString('es-ES', {minimumFractionDigits: 2})}</td>
+            </tr>
+        `;
+    });
+    
+    html += `
+                    <tr class="bg-gray-100 font-semibold">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" colspan="3">TOTALES</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">$${parseFloat(data.totales.total_deudor).toLocaleString('es-ES', {minimumFractionDigits: 2})}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">$${parseFloat(data.totales.total_acreedor).toLocaleString('es-ES', {minimumFractionDigits: 2})}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">$${parseFloat(data.totales.total_deudor).toLocaleString('es-ES', {minimumFractionDigits: 2})}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">$${parseFloat(data.totales.total_acreedor).toLocaleString('es-ES', {minimumFractionDigits: 2})}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-4 p-3 ${data.totales.balanceado ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'} rounded">
+            <i class="fas fa-${data.totales.balanceado ? 'check-circle' : 'exclamation-triangle'} mr-2"></i>
+            ${data.totales.balanceado ? 'La balanza está correctamente balanceada' : 'ADVERTENCIA: La balanza no está balanceada'}
+        </div>
+    `;
+    
+    document.getElementById('report-content').innerHTML = html;
+    document.getElementById('report-display').classList.remove('hidden');
+    document.getElementById('report-display').scrollIntoView({ behavior: 'smooth' });
+}
+
+function mostrarReporteEstadoResultados(data) {
+    document.getElementById('report-title').textContent = 'Estado de Resultados';
+    
+    let html = `
+        <div class="mb-4">
+            <h4 class="font-semibold text-lg">${data.empresa}</h4>
+            <p class="text-gray-600">Del ${new Date(data.periodo.fecha_inicio).toLocaleDateString('es-ES')} al ${new Date(data.periodo.fecha_fin).toLocaleDateString('es-ES')}</p>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="space-y-4">
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <h5 class="font-semibold text-green-800 mb-2">INGRESOS</h5>
+    `;
+    
+    data.detalle.ingresos.forEach(ingreso => {
+        html += `
+            <div class="flex justify-between">
+                <span>${ingreso.cuenta_codigo} - ${ingreso.cuenta_nombre}</span>
+                <span class="font-medium">$${parseFloat(ingreso.saldo).toLocaleString('es-ES', {minimumFractionDigits: 2})}</span>
+            </div>
+        `;
+    });
+    
+    html += `
+                    <div class="border-t border-green-200 mt-2 pt-2 flex justify-between font-bold">
+                        <span>Total Ingresos:</span>
+                        <span>$${parseFloat(data.resumen.ingresos).toLocaleString('es-ES', {minimumFractionDigits: 2})}</span>
+                    </div>
+                </div>
+                
+                <div class="bg-red-50 p-4 rounded-lg">
+                    <h5 class="font-semibold text-red-800 mb-2">COSTOS</h5>
+    `;
+    
+    data.detalle.costos.forEach(costo => {
+        html += `
+            <div class="flex justify-between">
+                <span>${costo.cuenta_codigo} - ${costo.cuenta_nombre}</span>
+                <span class="font-medium">$${parseFloat(costo.saldo).toLocaleString('es-ES', {minimumFractionDigits: 2})}</span>
+            </div>
+        `;
+    });
+    
+    html += `
+                    <div class="border-t border-red-200 mt-2 pt-2 flex justify-between font-bold">
+                        <span>Total Costos:</span>
+                        <span>$${parseFloat(data.resumen.costos).toLocaleString('es-ES', {minimumFractionDigits: 2})}</span>
+                    </div>
+                </div>
+                
+                <div class="bg-orange-50 p-4 rounded-lg">
+                    <h5 class="font-semibold text-orange-800 mb-2">GASTOS</h5>
+    `;
+    
+    data.detalle.gastos.forEach(gasto => {
+        html += `
+            <div class="flex justify-between">
+                <span>${gasto.cuenta_codigo} - ${gasto.cuenta_nombre}</span>
+                <span class="font-medium">$${parseFloat(gasto.saldo).toLocaleString('es-ES', {minimumFractionDigits: 2})}</span>
+            </div>
+        `;
+    });
+    
+    html += `
+                    <div class="border-t border-orange-200 mt-2 pt-2 flex justify-between font-bold">
+                        <span>Total Gastos:</span>
+                        <span>$${parseFloat(data.resumen.gastos).toLocaleString('es-ES', {minimumFractionDigits: 2})}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-blue-50 p-6 rounded-lg">
+                <h5 class="font-semibold text-blue-800 mb-4 text-lg">RESUMEN FINANCIERO</h5>
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between">
+                        <span>Ingresos Totales:</span>
+                        <span class="font-medium">$${parseFloat(data.resumen.ingresos).toLocaleString('es-ES', {minimumFractionDigits: 2})}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>(-) Costos:</span>
+                        <span class="font-medium">$${parseFloat(data.resumen.costos).toLocaleString('es-ES', {minimumFractionDigits: 2})}</span>
+                    </div>
+                    <div class="flex justify-between border-t pt-2">
+                        <span class="font-semibold">Utilidad Bruta:</span>
+                        <span class="font-bold">$${parseFloat(data.resumen.utilidad_bruta).toLocaleString('es-ES', {minimumFractionDigits: 2})}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>(-) Gastos Operativos:</span>
+                        <span class="font-medium">$${parseFloat(data.resumen.gastos).toLocaleString('es-ES', {minimumFractionDigits: 2})}</span>
+                    </div>
+                    <div class="flex justify-between border-t pt-2">
+                        <span class="font-semibold">Utilidad Operativa:</span>
+                        <span class="font-bold">$${parseFloat(data.resumen.utilidad_operativa).toLocaleString('es-ES', {minimumFractionDigits: 2})}</span>
+                    </div>
+                    <div class="flex justify-between border-t-2 border-blue-300 pt-3 text-lg ${parseFloat(data.resumen.utilidad_neta) >= 0 ? 'text-green-700' : 'text-red-700'}">
+                        <span class="font-bold">UTILIDAD NETA:</span>
+                        <span class="font-bold">$${parseFloat(data.resumen.utilidad_neta).toLocaleString('es-ES', {minimumFractionDigits: 2})}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('report-content').innerHTML = html;
+    document.getElementById('report-display').classList.remove('hidden');
+    document.getElementById('report-display').scrollIntoView({ behavior: 'smooth' });
+}
+
+function mostrarReporteBalanceGeneral(data) {
+    document.getElementById('report-title').textContent = 'Balance General';
+    
+    let html = `
+        <div class="mb-4">
+            <h4 class="font-semibold text-lg">${data.empresa}</h4>
+            <p class="text-gray-600">Al ${new Date(data.fecha_corte).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- ACTIVOS -->
+            <div class="bg-blue-50 p-4 rounded-lg">
+                <h5 class="font-bold text-blue-800 mb-3 text-lg">ACTIVOS</h5>
+    `;
+    
+    data.activos.detalle.forEach(activo => {
+        html += `
+            <div class="flex justify-between mb-1">
+                <span>${activo.cuenta_codigo} - ${activo.cuenta_nombre}</span>
+                <span class="font-medium">$${parseFloat(activo.saldo).toLocaleString('es-ES', {minimumFractionDigits: 2})}</span>
+            </div>
+        `;
+    });
+    
+    html += `
+                <div class="border-t-2 border-blue-300 mt-3 pt-3 flex justify-between font-bold text-lg">
+                    <span>TOTAL ACTIVOS:</span>
+                    <span>$${parseFloat(data.activos.total).toLocaleString('es-ES', {minimumFractionDigits: 2})}</span>
+                </div>
+            </div>
+            
+            <!-- PASIVOS Y CAPITAL -->
+            <div class="space-y-4">
+                <!-- Pasivos -->
+                <div class="bg-red-50 p-4 rounded-lg">
+                    <h5 class="font-bold text-red-800 mb-3">PASIVOS</h5>
+    `;
+    
+    if (data.pasivos.detalle.length > 0) {
+        data.pasivos.detalle.forEach(pasivo => {
+            html += `
+                <div class="flex justify-between mb-1">
+                    <span>${pasivo.cuenta_codigo} - ${pasivo.cuenta_nombre}</span>
+                    <span class="font-medium">$${parseFloat(pasivo.saldo).toLocaleString('es-ES', {minimumFractionDigits: 2})}</span>
+                </div>
+            `;
+        });
+    } else {
+        html += `<p class="text-gray-600 text-sm">No hay pasivos registrados</p>`;
+    }
+    
+    html += `
+                    <div class="border-t border-red-200 mt-2 pt-2 flex justify-between font-bold">
+                        <span>Total Pasivos:</span>
+                        <span>$${parseFloat(data.pasivos.total).toLocaleString('es-ES', {minimumFractionDigits: 2})}</span>
+                    </div>
+                </div>
+                
+                <!-- Capital -->
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <h5 class="font-bold text-green-800 mb-3">CAPITAL</h5>
+    `;
+    
+    if (data.capital.detalle.length > 0) {
+        data.capital.detalle.forEach(capital => {
+            html += `
+                <div class="flex justify-between mb-1">
+                    <span>${capital.cuenta_codigo} - ${capital.cuenta_nombre}</span>
+                    <span class="font-medium">$${parseFloat(capital.saldo).toLocaleString('es-ES', {minimumFractionDigits: 2})}</span>
+                </div>
+            `;
+        });
+    }
+    
+    html += `
+                    <div class="flex justify-between mb-1">
+                        <span>Resultado del Ejercicio</span>
+                        <span class="font-medium ${parseFloat(data.capital.resultado_ejercicio) >= 0 ? 'text-green-600' : 'text-red-600'}">$${parseFloat(data.capital.resultado_ejercicio).toLocaleString('es-ES', {minimumFractionDigits: 2})}</span>
+                    </div>
+                    <div class="border-t border-green-200 mt-2 pt-2 flex justify-between font-bold">
+                        <span>Total Capital:</span>
+                        <span>$${parseFloat(data.capital.total).toLocaleString('es-ES', {minimumFractionDigits: 2})}</span>
+                    </div>
+                </div>
+                
+                <!-- Total Pasivo + Capital -->
+                <div class="bg-gray-100 p-4 rounded-lg border-2 border-gray-300">
+                    <div class="flex justify-between font-bold text-lg">
+                        <span>TOTAL PASIVO + CAPITAL:</span>
+                        <span>$${parseFloat(data.verificacion.total_pasivos_capital).toLocaleString('es-ES', {minimumFractionDigits: 2})}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Verificación de Balance -->
+        <div class="mt-6 p-4 ${data.verificacion.balanceado ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'} rounded-lg">
+            <i class="fas fa-${data.verificacion.balanceado ? 'check-circle' : 'exclamation-triangle'} mr-2"></i>
+            <strong>${data.verificacion.balanceado ? 'Balance Correcto' : 'ADVERTENCIA: Balance Incorrecto'}</strong>
+            <div class="mt-2 text-sm">
+                <div>Total Activos: $${parseFloat(data.verificacion.total_activos).toLocaleString('es-ES', {minimumFractionDigits: 2})}</div>
+                <div>Total Pasivo + Capital: $${parseFloat(data.verificacion.total_pasivos_capital).toLocaleString('es-ES', {minimumFractionDigits: 2})}</div>
+                ${!data.verificacion.balanceado ? `<div class="font-bold">Diferencia: $${(parseFloat(data.verificacion.total_activos) - parseFloat(data.verificacion.total_pasivos_capital)).toLocaleString('es-ES', {minimumFractionDigits: 2})}</div>` : ''}
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('report-content').innerHTML = html;
+    document.getElementById('report-display').classList.remove('hidden');
+    document.getElementById('report-display').scrollIntoView({ behavior: 'smooth' });
+}
+
+function mostrarReporteLibroDiario(data) {
+    document.getElementById('report-title').textContent = 'Libro Diario';
+    
+    let html = `
+        <div class="mb-4">
+            <h4 class="font-semibold text-lg">${data.empresa}</h4>
+            <p class="text-gray-600">Del ${new Date(data.periodo.fecha_inicio).toLocaleDateString('es-ES')} al ${new Date(data.periodo.fecha_fin).toLocaleDateString('es-ES')}</p>
+            <p class="text-sm text-gray-500">Total de transacciones: ${data.resumen.total_transacciones}</p>
+        </div>
+    `;
+    
+    if (data.transacciones.length === 0) {
+        html += `
+            <div class="text-center py-8 text-gray-500">
+                <i class="fas fa-inbox text-4xl mb-4"></i>
+                <p>No hay transacciones en el período seleccionado</p>
+            </div>
+        `;
+    } else {
+        data.transacciones.forEach(trans => {
+            html += `
+                <div class="mb-6 border border-gray-200 rounded-lg overflow-hidden">
+                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="font-semibold">Folio: ${trans.folio}</span>
+                                <span class="mx-2 text-gray-400">•</span>
+                                <span class="text-sm text-gray-600">${new Date(trans.fecha).toLocaleDateString('es-ES')}</span>
+                                <span class="mx-2 text-gray-400">•</span>
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
+                                    ${trans.estado === 'CONTABILIZADA' ? 'bg-green-100 text-green-800' : 
+                                      trans.estado === 'VALIDADA' ? 'bg-yellow-100 text-yellow-800' : 
+                                      'bg-gray-100 text-gray-800'}">${trans.estado}</span>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-sm font-medium">Total: $${parseFloat(trans.total_debe).toLocaleString('es-ES', {minimumFractionDigits: 2})}</div>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-700">${trans.concepto}</p>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left py-2">Cuenta</th>
+                                    <th class="text-left py-2">Concepto</th>
+                                    <th class="text-right py-2">Debe</th>
+                                    <th class="text-right py-2">Haber</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+            
+            trans.movimientos.forEach(mov => {
+                html += `
+                    <tr class="border-b border-gray-100">
+                        <td class="py-2">${mov.cuenta_codigo} - ${mov.cuenta_nombre}</td>
+                        <td class="py-2 text-gray-600">${mov.concepto || '-'}</td>
+                        <td class="py-2 text-right ${parseFloat(mov.debe) > 0 ? 'font-medium' : 'text-gray-400'}">
+                            ${parseFloat(mov.debe) > 0 ? '$' + parseFloat(mov.debe).toLocaleString('es-ES', {minimumFractionDigits: 2}) : '-'}
+                        </td>
+                        <td class="py-2 text-right ${parseFloat(mov.haber) > 0 ? 'font-medium' : 'text-gray-400'}">
+                            ${parseFloat(mov.haber) > 0 ? '$' + parseFloat(mov.haber).toLocaleString('es-ES', {minimumFractionDigits: 2}) : '-'}
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                                <tr class="bg-gray-50 font-medium border-t border-gray-200">
+                                    <td class="py-2" colspan="2">TOTALES</td>
+                                    <td class="py-2 text-right">$${parseFloat(trans.total_debe).toLocaleString('es-ES', {minimumFractionDigits: 2})}</td>
+                                    <td class="py-2 text-right">$${parseFloat(trans.total_haber).toLocaleString('es-ES', {minimumFractionDigits: 2})}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        });
+    }
+    
+    document.getElementById('report-content').innerHTML = html;
+    document.getElementById('report-display').classList.remove('hidden');
+    document.getElementById('report-display').scrollIntoView({ behavior: 'smooth' });
+}
+
+function mostrarReporteLibroMayor(data) {
+    document.getElementById('report-title').textContent = 'Libro Mayor';
+    
+    let html = `
+        <div class="mb-4">
+            <h4 class="font-semibold text-lg">${data.empresa}</h4>
+            <p class="text-gray-600">Del ${new Date(data.periodo.fecha_inicio).toLocaleDateString('es-ES')} al ${new Date(data.periodo.fecha_fin).toLocaleDateString('es-ES')}</p>
+            <p class="text-sm text-gray-500">Total de cuentas: ${data.resumen.total_cuentas} | Total de movimientos: ${data.resumen.total_movimientos}</p>
+        </div>
+    `;
+    
+    if (data.libro_mayor.length === 0) {
+        html += `
+            <div class="text-center py-8 text-gray-500">
+                <i class="fas fa-inbox text-4xl mb-4"></i>
+                <p>No hay movimientos en el período seleccionado</p>
+            </div>
+        `;
+    } else {
+        data.libro_mayor.forEach(cuenta => {
+            html += `
+                <div class="mb-8 border border-gray-200 rounded-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-4">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h5 class="text-xl font-bold">${cuenta.cuenta.codigo} - ${cuenta.cuenta.nombre}</h5>
+                                <p class="text-blue-100 text-sm">Tipo: ${cuenta.cuenta.tipo} | Naturaleza: ${cuenta.cuenta.naturaleza}</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-sm">Saldo Inicial</div>
+                                <div class="text-xl font-bold ${parseFloat(cuenta.saldo_inicial) >= 0 ? 'text-green-200' : 'text-red-200'}">
+                                    $${parseFloat(cuenta.saldo_inicial).toLocaleString('es-ES', {minimumFractionDigits: 2})}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6">
+                        ${cuenta.movimientos.length === 0 ? 
+                            '<p class="text-gray-500 text-center py-4">No hay movimientos en este período</p>' :
+                            `<div class="overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead>
+                                        <tr class="bg-gray-50 border-b border-gray-200">
+                                            <th class="text-left py-3 px-4">Fecha</th>
+                                            <th class="text-left py-3 px-4">Folio</th>
+                                            <th class="text-left py-3 px-4">Concepto</th>
+                                            <th class="text-right py-3 px-4">Debe</th>
+                                            <th class="text-right py-3 px-4">Haber</th>
+                                            <th class="text-right py-3 px-4">Saldo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${cuenta.movimientos.map(mov => `
+                                            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                                <td class="py-3 px-4">${new Date(mov.fecha).toLocaleDateString('es-ES')}</td>
+                                                <td class="py-3 px-4 font-medium">${mov.folio}</td>
+                                                <td class="py-3 px-4 text-gray-700">${mov.concepto}</td>
+                                                <td class="py-3 px-4 text-right ${parseFloat(mov.debe) > 0 ? 'font-medium text-green-600' : 'text-gray-400'}">
+                                                    ${parseFloat(mov.debe) > 0 ? '$' + parseFloat(mov.debe).toLocaleString('es-ES', {minimumFractionDigits: 2}) : '-'}
+                                                </td>
+                                                <td class="py-3 px-4 text-right ${parseFloat(mov.haber) > 0 ? 'font-medium text-red-600' : 'text-gray-400'}">
+                                                    ${parseFloat(mov.haber) > 0 ? '$' + parseFloat(mov.haber).toLocaleString('es-ES', {minimumFractionDigits: 2}) : '-'}
+                                                </td>
+                                                <td class="py-3 px-4 text-right font-semibold ${parseFloat(mov.saldo) >= 0 ? 'text-green-600' : 'text-red-600'}">
+                                                    $${parseFloat(mov.saldo).toLocaleString('es-ES', {minimumFractionDigits: 2})}
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>`
+                        }
+                        
+                        <div class="mt-4 bg-gray-50 p-4 rounded-lg">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
+                                <div>
+                                    <div class="text-xs text-gray-600">Saldo Inicial</div>
+                                    <div class="font-bold text-lg ${parseFloat(cuenta.saldo_inicial) >= 0 ? 'text-green-600' : 'text-red-600'}">
+                                        $${parseFloat(cuenta.saldo_inicial).toLocaleString('es-ES', {minimumFractionDigits: 2})}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-gray-600">Total Cargos</div>
+                                    <div class="font-bold text-lg text-green-600">
+                                        $${parseFloat(cuenta.totales_periodo.debe).toLocaleString('es-ES', {minimumFractionDigits: 2})}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-gray-600">Total Abonos</div>
+                                    <div class="font-bold text-lg text-red-600">
+                                        $${parseFloat(cuenta.totales_periodo.haber).toLocaleString('es-ES', {minimumFractionDigits: 2})}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-gray-600">Saldo Final</div>
+                                    <div class="font-bold text-xl ${parseFloat(cuenta.saldo_final) >= 0 ? 'text-green-600' : 'text-red-600'}">
+                                        $${parseFloat(cuenta.saldo_final).toLocaleString('es-ES', {minimumFractionDigits: 2})}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+    
+    document.getElementById('report-content').innerHTML = html;
+    document.getElementById('report-display').classList.remove('hidden');
+    document.getElementById('report-display').scrollIntoView({ behavior: 'smooth' });
+}
+
+function mostrarReporteFlujoEfectivo(data) {
+    document.getElementById('report-title').textContent = 'Flujo de Efectivo';
+    
+    let html = `
+        <div class="mb-6">
+            <h4 class="font-semibold text-lg">${data.empresa}</h4>
+            <p class="text-gray-600">Del ${new Date(data.periodo.fecha_inicio).toLocaleDateString('es-ES')} al ${new Date(data.periodo.fecha_fin).toLocaleDateString('es-ES')}</p>
+            <p class="text-sm text-gray-500">Total de movimientos: ${data.estadisticas.total_movimientos}</p>
+        </div>
+        
+        <!-- Resumen Ejecutivo -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-blue-50 p-4 rounded-lg text-center">
+                <div class="text-xs text-blue-600 uppercase tracking-wide">Saldo Inicial</div>
+                <div class="text-2xl font-bold ${parseFloat(data.resumen.saldo_inicial) >= 0 ? 'text-blue-600' : 'text-red-600'}">
+                    $${parseFloat(data.resumen.saldo_inicial).toLocaleString('es-ES', {minimumFractionDigits: 2})}
+                </div>
+            </div>
+            <div class="bg-green-50 p-4 rounded-lg text-center">
+                <div class="text-xs text-green-600 uppercase tracking-wide">Total Entradas</div>
+                <div class="text-2xl font-bold text-green-600">
+                    $${parseFloat(data.resumen.total_entradas).toLocaleString('es-ES', {minimumFractionDigits: 2})}
+                </div>
+            </div>
+            <div class="bg-red-50 p-4 rounded-lg text-center">
+                <div class="text-xs text-red-600 uppercase tracking-wide">Total Salidas</div>
+                <div class="text-2xl font-bold text-red-600">
+                    $${parseFloat(data.resumen.total_salidas).toLocaleString('es-ES', {minimumFractionDigits: 2})}
+                </div>
+            </div>
+            <div class="bg-purple-50 p-4 rounded-lg text-center">
+                <div class="text-xs text-purple-600 uppercase tracking-wide">Saldo Final</div>
+                <div class="text-2xl font-bold ${parseFloat(data.resumen.saldo_final) >= 0 ? 'text-purple-600' : 'text-red-600'}">
+                    $${parseFloat(data.resumen.saldo_final).toLocaleString('es-ES', {minimumFractionDigits: 2})}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Flujo Neto -->
+        <div class="mb-6 p-4 rounded-lg ${parseFloat(data.resumen.flujo_neto) >= 0 ? 'bg-green-100 border-green-300' : 'bg-red-100 border-red-300'} border">
+            <div class="text-center">
+                <div class="text-sm ${parseFloat(data.resumen.flujo_neto) >= 0 ? 'text-green-700' : 'text-red-700'}">
+                    FLUJO NETO DEL PERÍODO
+                </div>
+                <div class="text-3xl font-bold ${parseFloat(data.resumen.flujo_neto) >= 0 ? 'text-green-700' : 'text-red-700'}">
+                    $${parseFloat(data.resumen.flujo_neto).toLocaleString('es-ES', {minimumFractionDigits: 2})}
+                </div>
+                <div class="text-sm ${parseFloat(data.resumen.flujo_neto) >= 0 ? 'text-green-600' : 'text-red-600'}">
+                    ${parseFloat(data.resumen.flujo_neto) >= 0 ? 'Flujo Positivo - Entrada neta de efectivo' : 'Flujo Negativo - Salida neta de efectivo'}
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Entradas de Efectivo -->
+            <div class="bg-green-50 rounded-lg p-6">
+                <h5 class="font-bold text-green-800 mb-4 flex items-center">
+                    <i class="fas fa-arrow-down text-green-600 mr-2"></i>
+                    ENTRADAS DE EFECTIVO
+                </h5>
+                ${data.movimientos.entradas.length === 0 ? 
+                    '<p class="text-gray-600 text-center py-4">No hay entradas de efectivo en este período</p>' :
+                    `<div class="space-y-2 max-h-96 overflow-y-auto">
+                        ${data.movimientos.entradas.map(entrada => `
+                            <div class="bg-white p-3 rounded border-l-4 border-green-500">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex-1">
+                                        <div class="text-sm font-medium text-gray-900">${entrada.concepto}</div>
+                                        <div class="text-xs text-gray-600">
+                                            ${new Date(entrada.fecha).toLocaleDateString('es-ES')} • 
+                                            Folio: ${entrada.folio} • 
+                                            ${entrada.cuenta_efectivo}
+                                        </div>
+                                        <div class="text-xs text-green-700 bg-green-100 inline-block px-2 py-1 rounded mt-1">
+                                            ${entrada.tipo_transaccion}
+                                        </div>
+                                    </div>
+                                    <div class="text-green-600 font-bold">
+                                        +$${parseFloat(entrada.monto).toLocaleString('es-ES', {minimumFractionDigits: 2})}
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>`
+                }
+                <div class="mt-4 pt-4 border-t border-green-200">
+                    <div class="flex justify-between items-center font-bold text-green-800">
+                        <span>Total Entradas:</span>
+                        <span class="text-xl">$${parseFloat(data.resumen.total_entradas).toLocaleString('es-ES', {minimumFractionDigits: 2})}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Salidas de Efectivo -->
+            <div class="bg-red-50 rounded-lg p-6">
+                <h5 class="font-bold text-red-800 mb-4 flex items-center">
+                    <i class="fas fa-arrow-up text-red-600 mr-2"></i>
+                    SALIDAS DE EFECTIVO
+                </h5>
+                ${data.movimientos.salidas.length === 0 ? 
+                    '<p class="text-gray-600 text-center py-4">No hay salidas de efectivo en este período</p>' :
+                    `<div class="space-y-2 max-h-96 overflow-y-auto">
+                        ${data.movimientos.salidas.map(salida => `
+                            <div class="bg-white p-3 rounded border-l-4 border-red-500">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex-1">
+                                        <div class="text-sm font-medium text-gray-900">${salida.concepto}</div>
+                                        <div class="text-xs text-gray-600">
+                                            ${new Date(salida.fecha).toLocaleDateString('es-ES')} • 
+                                            Folio: ${salida.folio} • 
+                                            ${salida.cuenta_efectivo}
+                                        </div>
+                                        <div class="text-xs text-red-700 bg-red-100 inline-block px-2 py-1 rounded mt-1">
+                                            ${salida.tipo_transaccion}
+                                        </div>
+                                    </div>
+                                    <div class="text-red-600 font-bold">
+                                        -$${parseFloat(salida.monto).toLocaleString('es-ES', {minimumFractionDigits: 2})}
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>`
+                }
+                <div class="mt-4 pt-4 border-t border-red-200">
+                    <div class="flex justify-between items-center font-bold text-red-800">
+                        <span>Total Salidas:</span>
+                        <span class="text-xl">$${parseFloat(data.resumen.total_salidas).toLocaleString('es-ES', {minimumFractionDigits: 2})}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Cuentas de Efectivo -->
+        <div class="mt-6 bg-blue-50 rounded-lg p-6">
+            <h5 class="font-bold text-blue-800 mb-4">
+                <i class="fas fa-wallet text-blue-600 mr-2"></i>
+                CUENTAS DE EFECTIVO ANALIZADAS
+            </h5>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                ${data.cuentas_efectivo.map(cuenta => `
+                    <div class="bg-white p-3 rounded border">
+                        <div class="font-medium text-gray-900">${cuenta.codigo}</div>
+                        <div class="text-sm text-gray-600">${cuenta.nombre}</div>
+                    </div>
+                `).join('')}
+            </div>
+            ${data.saldo_inicial.detalle.length > 0 ? `
+                <div class="mt-4">
+                    <h6 class="font-semibold text-blue-700 mb-2">Saldos Iniciales por Cuenta:</h6>
+                    <div class="space-y-1">
+                        ${data.saldo_inicial.detalle.map(detalle => `
+                            <div class="flex justify-between bg-white p-2 rounded border">
+                                <span class="text-sm">${detalle.cuenta_codigo} - ${detalle.cuenta_nombre}</span>
+                                <span class="text-sm font-medium ${parseFloat(detalle.saldo_inicial) >= 0 ? 'text-green-600' : 'text-red-600'}">
+                                    $${parseFloat(detalle.saldo_inicial).toLocaleString('es-ES', {minimumFractionDigits: 2})}
+                                </span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            ` : ''}
+        </div>
+    `;
+    
+    document.getElementById('report-content').innerHTML = html;
+    document.getElementById('report-display').classList.remove('hidden');
+    document.getElementById('report-display').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function cargarCuentasLibroMayor() {
+    try {
+        const response = await fetch('/api/reportes/reportes/libro_mayor/');
+        if (response.ok) {
+            const data = await response.json();
+            const select = document.getElementById('cuenta_mayor');
+            
+            // Clear existing options except "Todas las cuentas"
+            select.innerHTML = '<option value="todas">Todas las cuentas</option>';
+            
+            // Add account options
+            data.cuentas_disponibles.forEach(cuenta => {
+                const option = document.createElement('option');
+                option.value = cuenta.id;
+                option.textContent = `${cuenta.codigo} - ${cuenta.nombre}`;
+                select.appendChild(option);
+            });
+        }
+    } catch (error) {
+        console.error('Error cargando cuentas:', error);
+    }
+}
+
+// Export functions
+async function exportarReporte(formato) {
+    if (!currentReportData || !currentReportType || !currentReportParams) {
+        alert('No hay reporte cargado para exportar');
+        return;
+    }
+    
+    mostrarCargando(`Exportando a ${formato.toUpperCase()}...`);
+    
+    try {
+        let url;
+        const params = new URLSearchParams(currentReportParams);
+        params.append('formato', formato);
+        
+        switch (currentReportType) {
+            case 'balanza':
+                url = `/api/reportes/reportes/balanza_comprobacion/?${params.toString()}`;
+                break;
+            case 'estado_resultados':
+                url = `/api/reportes/reportes/estado_resultados/?${params.toString()}`;
+                break;
+            case 'balance_general':
+                url = `/api/reportes/reportes/balance_general/?${params.toString()}`;
+                break;
+            case 'libro_diario':
+                url = `/api/reportes/reportes/libro_diario/?${params.toString()}`;
+                break;
+            case 'libro_mayor':
+                url = `/api/reportes/reportes/libro_mayor/?${params.toString()}`;
+                break;
+            case 'flujo_efectivo':
+                url = `/api/reportes/reportes/flujo_efectivo/?${params.toString()}`;
+                break;
+            default:
+                throw new Error('Tipo de reporte no válido');
+        }
+        
+        const response = await fetch(url);
+        if (response.ok) {
+            const blob = await response.blob();
+            const filename = `${currentReportType}_${Date.now()}.${formato}`;
+            descargarArchivo(blob, filename);
+        } else {
+            alert('Error al exportar el reporte');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al exportar el reporte');
+    } finally {
+        ocultarCargando();
+    }
+}
+
+function cerrarReporte() {
+    document.getElementById('report-display').classList.add('hidden');
+    currentReportData = null;
+    currentReportType = null;
+    currentReportParams = null;
+}
+
+// Utility functions
+function descargarArchivo(blob, filename) {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+}
+
+function mostrarCargando(mensaje) {
+    const loadingDiv = document.createElement('div');
+    loadingDiv.id = 'loading-overlay';
+    loadingDiv.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50';
+    loadingDiv.innerHTML = `
+        <div class="bg-white rounded-lg p-6 shadow-xl">
+            <div class="text-center">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                <p class="text-gray-600">${mensaje}</p>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(loadingDiv);
+}
+
+function ocultarCargando() {
+    const loadingDiv = document.getElementById('loading-overlay');
+    if (loadingDiv) {
+        loadingDiv.remove();
+    }
+}
+</script>
+{% endblock %}

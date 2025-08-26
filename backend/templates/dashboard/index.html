@@ -1,0 +1,388 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - ZivaBSuite{% endblock %}
+
+{% block content %}
+<div class="py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="md:flex md:items-center md:justify-between mb-8">
+            <div class="flex-1 min-w-0">
+                <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                    Dashboard Financiero
+                </h2>
+                <p class="mt-1 text-sm text-gray-500">
+                    {{ fecha_actual|date:"d M Y" }} - {{ empresa_actual }}
+                </p>
+            </div>
+            <div class="mt-4 flex md:mt-0 md:ml-4">
+                <button onclick="window.location.href='/transacciones/crear/'" type="button" class="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                    <i class="fas fa-plus mr-2"></i>Nueva Transacción
+                </button>
+            </div>
+        </div>
+        
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+            <!-- Card 1: Ingresos -->
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="rounded-md bg-green-500 p-3">
+                                <i class="fas fa-arrow-up text-white text-2xl"></i>
+                            </div>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">
+                                    Ingresos del Mes
+                                </dt>
+                                <dd class="text-2xl font-semibold text-gray-900">
+                                    ${{ stats.ingresos|floatformat:2|default:"0" }}
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card 2: Gastos -->
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="rounded-md bg-red-500 p-3">
+                                <i class="fas fa-arrow-down text-white text-2xl"></i>
+                            </div>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">
+                                    Gastos del Mes
+                                </dt>
+                                <dd class="text-2xl font-semibold text-gray-900">
+                                    ${{ stats.gastos|floatformat:2|default:"0" }}
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card 3: Utilidad -->
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="rounded-md bg-blue-500 p-3">
+                                <i class="fas fa-chart-line text-white text-2xl"></i>
+                            </div>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">
+                                    Utilidad Neta
+                                </dt>
+                                <dd class="text-2xl font-semibold text-gray-900">
+                                    ${{ stats.utilidad|floatformat:2|default:"0" }}
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card 4: Cuentas -->
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="rounded-md bg-purple-500 p-3">
+                                <i class="fas fa-wallet text-white text-2xl"></i>
+                            </div>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">
+                                    Saldo en Caja
+                                </dt>
+                                <dd class="text-2xl font-semibold text-gray-900">
+                                    ${{ stats.saldo_caja|floatformat:2|default:"0" }}
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Charts Row -->
+        <div class="grid grid-cols-1 gap-5 lg:grid-cols-2 mb-8">
+            <!-- Chart 1: Ingresos vs Gastos -->
+            <div class="bg-white overflow-hidden shadow rounded-lg p-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                    Ingresos vs Gastos - Últimos 6 Meses
+                </h3>
+                <canvas id="ingresosGastosChart"></canvas>
+            </div>
+            
+            <!-- Chart 2: Balance por Tipo de Cuenta -->
+            <div class="bg-white overflow-hidden shadow rounded-lg p-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                    Balance por Tipo de Cuenta
+                </h3>
+                <canvas id="balanceChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Recent Transactions Table -->
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">
+                    Transacciones Recientes
+                </h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Fecha
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Folio
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Concepto
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Tipo
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Monto
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Estado
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for trans in transacciones_recientes %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {{ trans.fecha|date:"d/m/Y" }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                {{ trans.folio }}
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-900">
+                                {{ trans.concepto|truncatechars:50 }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                    {% if trans.tipo == 'INGRESO' %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                                    {{ trans.tipo }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                ${{ trans.total_debe|floatformat:2 }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                    {% if trans.estado == 'CONTABILIZADA' %}bg-green-100 text-green-800
+                                    {% elif trans.estado == 'VALIDADA' %}bg-yellow-100 text-yellow-800
+                                    {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                    {{ trans.estado }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
+                                No hay transacciones recientes
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    cargarDashboardCharts();
+});
+
+async function cargarDashboardCharts() {
+    try {
+        // Cargar datos de gráficos desde API
+        const [chartResponse, balanceResponse] = await Promise.all([
+            fetch('/api/reportes/charts/ingresos-gastos/'),
+            fetch('/api/reportes/charts/balance-cuentas/')
+        ]);
+        
+        let chartData = null;
+        let balanceData = null;
+        
+        if (chartResponse.ok) {
+            chartData = await chartResponse.json();
+        }
+        
+        if (balanceResponse.ok) {
+            balanceData = await balanceResponse.json();
+        }
+        
+        // Chart 1: Ingresos vs Gastos
+        const ctx1 = document.getElementById('ingresosGastosChart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: chartData?.labels || ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Ingresos',
+                    data: chartData?.ingresos || [{{ stats.ingresos }}, 0, 0, 0, 0, 0],
+                    borderColor: 'rgb(34, 197, 94)',
+                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                    tension: 0.1
+                }, {
+                    label: 'Gastos',
+                    data: chartData?.gastos || [{{ stats.gastos }}, 0, 0, 0, 0, 0],
+                    borderColor: 'rgb(239, 68, 68)',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Chart 2: Balance por Tipo
+        const ctx2 = document.getElementById('balanceChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: balanceData?.labels || ['Activos', 'Pasivos', 'Capital', 'Ingresos', 'Gastos'],
+                datasets: [{
+                    data: balanceData?.values || [
+                        Math.abs({{ stats.saldo_caja }}),
+                        0,
+                        0,
+                        {{ stats.ingresos }},
+                        {{ stats.gastos }}
+                    ],
+                    backgroundColor: [
+                        'rgba(59, 130, 246, 0.8)',
+                        'rgba(239, 68, 68, 0.8)',
+                        'rgba(34, 197, 94, 0.8)',
+                        'rgba(168, 85, 247, 0.8)',
+                        'rgba(251, 146, 60, 0.8)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': $' + context.parsed.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+    } catch (error) {
+        console.error('Error cargando datos de gráficos:', error);
+        // Fallback con datos básicos del template
+        cargarChartsFallback();
+    }
+}
+
+function cargarChartsFallback() {
+    // Chart 1: Datos básicos del mes actual
+    const ctx1 = document.getElementById('ingresosGastosChart').getContext('2d');
+    new Chart(ctx1, {
+        type: 'line',
+        data: {
+            labels: ['Mes Actual'],
+            datasets: [{
+                label: 'Ingresos',
+                data: [{{ stats.ingresos }}],
+                borderColor: 'rgb(34, 197, 94)',
+                backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                tension: 0.1
+            }, {
+                label: 'Gastos',
+                data: [{{ stats.gastos }}],
+                borderColor: 'rgb(239, 68, 68)',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            }
+        }
+    });
+    
+    // Chart 2: Datos básicos
+    const ctx2 = document.getElementById('balanceChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+            labels: ['Caja', 'Ingresos', 'Gastos'],
+            datasets: [{
+                data: [
+                    Math.abs({{ stats.saldo_caja }}),
+                    {{ stats.ingresos }},
+                    {{ stats.gastos }}
+                ],
+                backgroundColor: [
+                    'rgba(59, 130, 246, 0.8)',
+                    'rgba(34, 197, 94, 0.8)',
+                    'rgba(239, 68, 68, 0.8)'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right',
+                }
+            }
+        }
+    });
+}
+</script>
+{% endblock %}

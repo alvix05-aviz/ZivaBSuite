@@ -1,0 +1,302 @@
+{% extends 'base.html' %}
+
+{% block title %}Configuración - ZivaBSuite{% endblock %}
+
+{% block content %}
+<div class="py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl">
+                <i class="fas fa-cogs text-indigo-600 mr-3"></i>Configuración del Sistema
+            </h2>
+            <p class="mt-1 text-sm text-gray-500">
+                Administra todas las configuraciones de {{ empresa_actual }}
+            </p>
+        </div>
+        
+        <!-- Configuration Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- Gestión de Empresas -->
+            <div class="bg-white overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow cursor-pointer" onclick="window.location.href='{% url 'configuracion_empresas' %}'">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="rounded-full bg-blue-100 p-3">
+                            <i class="fas fa-building text-blue-600 text-2xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Gestión de Empresas</h3>
+                            <p class="text-sm text-gray-500">Empresas, sucursales y configuración</p>
+                        </div>
+                    </div>
+                    <div class="border-t pt-4">
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Crear y editar empresas</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Gestionar usuarios y roles</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Configurar datos fiscales</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Multiempresa</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Catálogo de Cuentas -->
+            <div class="bg-white overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow cursor-pointer" onclick="window.location.href='{% url 'configuracion_catalogo' %}'">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="rounded-full bg-green-100 p-3">
+                            <i class="fas fa-list-alt text-green-600 text-2xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Catálogo de Cuentas</h3>
+                            <p class="text-sm text-gray-500">Estructura contable y clasificaciones</p>
+                        </div>
+                    </div>
+                    <div class="border-t pt-4">
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Configurar tipos de cuenta</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Naturaleza contable</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Niveles y jerarquías</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Cuentas predeterminadas</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tipos de Transacción -->
+            <div class="bg-white overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow cursor-pointer" onclick="window.location.href='{% url 'configuracion_transacciones' %}'">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="rounded-full bg-purple-100 p-3">
+                            <i class="fas fa-exchange-alt text-purple-600 text-2xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Tipos de Transacción</h3>
+                            <p class="text-sm text-gray-500">Diarios y tipos de pólizas</p>
+                        </div>
+                    </div>
+                    <div class="border-t pt-4">
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Configurar tipos de póliza</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Numeración automática</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Validaciones específicas</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Períodos contables</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Centros de Costo -->
+            <div class="bg-white overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow cursor-pointer" onclick="window.location.href='{% url 'configuracion_placeholder' 'centros-costo' %}'">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="rounded-full bg-indigo-100 p-3">
+                            <i class="fas fa-sitemap text-indigo-600 text-2xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Centros de Costo</h3>
+                            <p class="text-sm text-gray-500">Departamentos y proyectos</p>
+                        </div>
+                    </div>
+                    <div class="border-t pt-4">
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Crear departamentos</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Gestionar proyectos</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Asignación de costos</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Reportes por centro</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Formatos de Reportes -->
+            <div class="bg-white overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow cursor-pointer" onclick="window.location.href='{% url 'configuracion_placeholder' 'reportes' %}'">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="rounded-full bg-yellow-100 p-3">
+                            <i class="fas fa-file-alt text-yellow-600 text-2xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Formatos de Reportes</h3>
+                            <p class="text-sm text-gray-500">Plantillas y diseños</p>
+                        </div>
+                    </div>
+                    <div class="border-t pt-4">
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Diseñar plantillas</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Logos y encabezados</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Formatos personalizados</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Exportación automática</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Configuración Fiscal -->
+            <div class="bg-white overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow cursor-pointer" onclick="window.location.href='{% url 'configuracion_placeholder' 'fiscal' %}'">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="rounded-full bg-red-100 p-3">
+                            <i class="fas fa-receipt text-red-600 text-2xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Configuración Fiscal</h3>
+                            <p class="text-sm text-gray-500">Impuestos y regulaciones</p>
+                        </div>
+                    </div>
+                    <div class="border-t pt-4">
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Configurar impuestos</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Regímenes fiscales</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>DIOT y otras declaraciones</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Facturación electrónica</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Respaldos y Seguridad -->
+            <div class="bg-white overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow cursor-pointer" onclick="window.location.href='{% url 'configuracion_placeholder' 'seguridad' %}'">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="rounded-full bg-gray-100 p-3">
+                            <i class="fas fa-shield-alt text-gray-600 text-2xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Respaldos y Seguridad</h3>
+                            <p class="text-sm text-gray-500">Protección de datos</p>
+                        </div>
+                    </div>
+                    <div class="border-t pt-4">
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Respaldos automáticos</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Control de acceso</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Auditoría de cambios</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Política de contraseñas</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Integraciones -->
+            <div class="bg-white overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow cursor-pointer" onclick="window.location.href='{% url 'configuracion_placeholder' 'integraciones' %}'">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="rounded-full bg-teal-100 p-3">
+                            <i class="fas fa-plug text-teal-600 text-2xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Integraciones</h3>
+                            <p class="text-sm text-gray-500">APIs y conexiones externas</p>
+                        </div>
+                    </div>
+                    <div class="border-t pt-4">
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Conexión bancaria</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>APIs de terceros</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Importación de datos</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Webhooks</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Configuración General -->
+            <div class="bg-white overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow cursor-pointer" onclick="window.location.href='{% url 'configuracion_placeholder' 'general' %}'">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="rounded-full bg-orange-100 p-3">
+                            <i class="fas fa-sliders-h text-orange-600 text-2xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Configuración General</h3>
+                            <p class="text-sm text-gray-500">Preferencias del sistema</p>
+                        </div>
+                    </div>
+                    <div class="border-t pt-4">
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Moneda predeterminada</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Zona horaria</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Formatos de fecha</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Notificaciones</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+        <!-- Sistema Info -->
+        <div class="mt-12 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg shadow-lg text-white">
+            <div class="p-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-2">
+                            <i class="fas fa-info-circle mr-2"></i>Información del Sistema
+                        </h3>
+                        <p class="text-indigo-100">Estado actual y estadísticas del sistema</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm text-indigo-200">Versión</div>
+                        <div class="text-2xl font-bold">5.0.0-MVP</div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold">{{ stats.empresas|default:"1" }}</div>
+                        <div class="text-indigo-200 text-sm">Empresas Configuradas</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold">{{ stats.usuarios|default:"1" }}</div>
+                        <div class="text-indigo-200 text-sm">Usuarios Activos</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold">{{ stats.cuentas|default:"0" }}</div>
+                        <div class="text-indigo-200 text-sm">Cuentas Contables</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold">{{ stats.transacciones|default:"0" }}</div>
+                        <div class="text-indigo-200 text-sm">Transacciones del Mes</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="mt-8">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-bolt text-yellow-500 mr-2"></i>Acciones Rápidas
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button onclick="respaldarDatos()" class="flex items-center justify-center px-6 py-3 border border-green-300 rounded-md shadow-sm bg-white text-green-700 hover:bg-green-50 transition">
+                    <i class="fas fa-download mr-2"></i>Crear Respaldo
+                </button>
+                <button onclick="verificarIntegridad()" class="flex items-center justify-center px-6 py-3 border border-blue-300 rounded-md shadow-sm bg-white text-blue-700 hover:bg-blue-50 transition">
+                    <i class="fas fa-check-circle mr-2"></i>Verificar Integridad
+                </button>
+                <button onclick="limpiarLogs()" class="flex items-center justify-center px-6 py-3 border border-gray-300 rounded-md shadow-sm bg-white text-gray-700 hover:bg-gray-50 transition">
+                    <i class="fas fa-trash mr-2"></i>Limpiar Logs
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function respaldarDatos() {
+    alert('Funcionalidad de respaldo - En desarrollo');
+}
+
+function verificarIntegridad() {
+    alert('Verificación de integridad - En desarrollo');
+}
+
+function limpiarLogs() {
+    if (confirm('¿Está seguro de que desea limpiar los logs del sistema?')) {
+        alert('Limpieza de logs - En desarrollo');
+    }
+}
+</script>
+{% endblock %}

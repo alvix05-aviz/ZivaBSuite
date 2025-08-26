@@ -1,0 +1,437 @@
+###Estructura propuesta
+
+sistema-contable/
+├── backend/                 # Django API
+│   ├── contabilidad/
+│   │   ├── models.py
+│   │   ├── serializers.py
+│   │   ├── views.py
+│   │   └── admin.py
+│   ├── compras/            # App satélite
+│   ├── gastos/             # App satélite
+│   ├── presupuesto/        # App satélite
+│   └── config/
+│       └── settings.py
+├── frontend/               # React App
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   └── themes/
+│   ├── package.json
+│   └── Dockerfile
+└── docker-compose.yml
+
+###  Modelo Django para el Módulo Contable
+
+# backend/contabilidad/models.py
+from django.db import models
+from django.contrib.auth.models import User
+import uuid
+
+class Empresa(models.Model):
+    nombre = models.CharField(max_length=200)
+    rfc = models.CharField(max_length=13, unique=True)
+    regimen_fiscal = models.CharField(max_length=100)
+    direccion = models.TextField()
+    telefono = models.CharField(max_length=15, blank=True)
+    activo = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.nombre} ({self.rfc})"
+
+
+class CuentaContable(models.Model):
+    TIPOS_CUENTA = [
+        ('A', 'Activo'),
+        ('P', 'Pasivo'),
+        ('C', 'Capital'),
+        ('I', 'Ingresos'),
+        ('G', 'Gastos'),
+    ]
+
+    codigo = models.CharField(max_length=20, unique=True)
+    nombre = models.CharField(max_length=200)
+    tipo = models.CharField(max_length=1, choices=TIPOS_CUENTA)
+    padre = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
+    nivel = models.IntegerField(default=1)
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['codigo']
+
+    def __str__(self):
+        return f"{self.codigo} - {self.nombre}"
+
+
+class Poliza(models.Model):
+    ESTADOS_POLIZA = [
+        ('B', 'Borrador'),
+        ('A', 'Aprobada'),
+        ('C', 'Cancelada'),
+        ('E', 'Enviada SAT'),
+    ]
+
+    TIPOS_POLIZA = [
+        ('I', 'Ingreso'),
+        ('E', 'Egreso'),
+        ('T', 'Traspaso'),
+        ('D', 'Diario'),
+    ]
+
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    folio = models.CharField(max_length=50, unique=True)
+    fecha = models.DateField()
+    tipo = models.CharField(max_length=1, choices=TIPOS_POLIZA)
+    concepto = models.TextField()
+    estado = models.CharField(max_length=1, choices=ESTADOS_POLIZA, default='B')
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
+    creado_por = models.ForeignKey(User, on_delete=models.PROTECT, related_name='polizas_creadas')
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_actualizacion = models.DateTimeField(auto_now=True)
+    total_debe = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    total_haber = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+
+    class Meta:
+        ordering = ['-fecha', '-folio']
+        indexes = [
+            models.Index(fields=['fecha', 'empresa']),
+            models.Index(fields=['estado', 'empresa']),
+        ]
+
+    def __str__(self):
+        return f"{self.folio} - {self.get_tipo_display()} - {self.fecha}"
+
+
+class MovimientoContable(models.Model):
+    poliza = models.ForeignKey(Poliza, on_delete=models.CASCADE, related_name='movimientos')
+    cuenta = models.ForeignKey(CuentaContable, on_delete=models.PROTECT)
+    concepto = models.CharField(max_length=300)
+    referencia = models.CharField(max_length=100, blank=True)
+    debe = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    haber = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    orden = models.IntegerField(default=0)
+
+    class Meta:
+        ordering = ['orden']
+
+    def __str__(self):
+        return f"{self.cuenta.codigo} - {self.concepto}"
+
+
+class ComprobanteFiscal(models.Model):
+    ESTADOS_CFDI = [
+        ('V', 'Vigente'),
+        ('C', 'Cancelado'),
+    ]
+
+    uuid = models.UUIDField(unique=True)  # UUID del XML
+    poliza = models.OneToOneField(Poliza, on_delete=models.CASCADE, related_name='comprobante_fiscal')
+    emisor_rfc = models.CharField(max_length=13)
+    receptor_rfc = models.CharField(max_length=13)
+    fecha_emision = models.DateTimeField()
+    serie = models.CharField(max_length=20, blank=True)
+    folio = models.CharField(max_length=40, blank=True)
+    subtotal = models.DecimalField(max_digits=15, decimal_places=2)
+    total = models.DecimalField(max_digits=15, decimal_places=2)
+    moneda = models.CharField(max_length=10, default='MXN')
+    tipo_cambio = models.DecimalField(max_digits=10, decimal_places=4, default=1)
+    metodo_pago = models.CharField(max_length=5)
+    forma_pago = models.CharField(max_length=5)
+    estado_sat = models.CharField(max_length=1, choices=ESTADOS_CFDI, default='V')
+    xml = models.BinaryField(null=True, blank=True)  # O guardar en sistema de archivos
+    fecha_timbrado = models.DateTimeField(null=True, blank=True)
+    sello_cfd = models.TextField(blank=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['uuid']),
+            models.Index(fields=['emisor_rfc', 'fecha_emision']),
+        ]
+
+    def __str__(self):
+        return f"{self.uuid} - {self.emisor_rfc} -> {self.receptor_rfc}"
+		
+### Serializers para Django REST Framework
+		
+# backend/contabilidad/serializers.py
+from rest_framework import serializers
+from .models import Poliza, MovimientoContable, ComprobanteFiscal, CuentaContable
+
+class CuentaContableSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CuentaContable
+        fields = '__all__'
+
+class MovimientoContableSerializer(serializers.ModelSerializer):
+    cuenta_codigo = serializers.CharField(source='cuenta.codigo', read_only=True)
+    cuenta_nombre = serializers.CharField(source='cuenta.nombre', read_only=True)
+
+    class Meta:
+        model = MovimientoContable
+        fields = '__all__'
+
+class PolizaSerializer(serializers.ModelSerializer):
+    movimientos = MovimientoContableSerializer(many=True)
+    creado_por_nombre = serializers.CharField(source='creado_por.get_full_name', read_only=True)
+    empresa_nombre = serializers.CharField(source='empresa.nombre', read_only=True)
+
+    class Meta:
+        model = Poliza
+        fields = '__all__'
+        read_only_fields = ('uuid', 'fecha_creacion', 'fecha_actualizacion', 'total_debe', 'total_haber')
+
+    def create(self, validated_data):
+        movimientos_data = validated_data.pop('movimientos')
+        poliza = Poliza.objects.create(**validated_data)
+        
+        total_debe = 0
+        total_haber = 0
+        
+        for movimiento_data in movimientos_data:
+            MovimientoContable.objects.create(poliza=poliza, **movimiento_data)
+            total_debe += movimiento_data.get('debe', 0)
+            total_haber += movimiento_data.get('haber', 0)
+        
+        poliza.total_debe = total_debe
+        poliza.total_haber = total_haber
+        poliza.save()
+        
+        return poliza
+
+class ComprobanteFiscalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ComprobanteFiscal
+        fields = '__all__'
+		
+	
+
+###  Configuración de React con Material-UI
+		
+// frontend/src/services/api.js
+import axios from 'axios';
+
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Interceptor para agregar el token de autenticación
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('access_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+export const contabilidadAPI = {
+  // Métodos para pólizas
+  getPolizas: (params) => api.get('/polizas/', { params }),
+  getPoliza: (id) => api.get(`/polizas/${id}/`),
+  createPoliza: (data) => api.post('/polizas/', data),
+  updatePoliza: (id, data) => api.put(`/polizas/${id}/`, data),
+  deletePoliza: (id) => api.delete(`/polizas/${id}/`),
+  
+  // Métodos para cuentas contables
+  getCuentas: () => api.get('/cuentas/'),
+  getCuenta: (id) => api.get(`/cuentas/${id}/`),
+  
+  // Métodos para comprobantes fiscales
+  getComprobantes: (params) => api.get('/comprobantes/', { params }),
+  uploadXML: (formData) => api.post('/comprobantes/upload-xml/', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+};
+
+export default api;
+
+
+
+### Ejemplo de Componente React con Material-UI
+
+// frontend/src/components/PolizaForm.js
+import React, { useState, useEffect } from 'react';
+import {
+  Container,
+  Paper,
+  Typography,
+  TextField,
+  Button,
+  Grid,
+  MenuItem,
+  Box,
+  Stepper,
+  Step,
+  StepLabel
+} from '@mui/material';
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { es } from 'date-fns/locale';
+import { contabilidadAPI } from '../services/api';
+
+const steps = ['Información básica', 'Movimientos contables', 'Revisión'];
+
+const PolizaForm = ({ onSubmit, initialData }) => {
+  const [activeStep, setActiveStep] = useState(0);
+  const [empresas, setEmpresas] = useState([]);
+  const [cuentas, setCuentas] = useState([]);
+  const [formData, setFormData] = useState({
+    folio: '',
+    fecha: new Date(),
+    tipo: 'D',
+    concepto: '',
+    empresa: '',
+    movimientos: [
+      { cuenta: '', concepto: '', referencia: '', debe: 0, haber: 0, orden: 0 }
+    ]
+  });
+
+  useEffect(() => {
+    // Cargar empresas y cuentas
+    const loadData = async () => {
+      try {
+        const [empresasRes, cuentasRes] = await Promise.all([
+          contabilidadAPI.getEmpresas(),
+          contabilidadAPI.getCuentas()
+        ]);
+        setEmpresas(empresasRes.data);
+        setCuentas(cuentasRes.data);
+      } catch (error) {
+        console.error('Error loading data:', error);
+      }
+    };
+    loadData();
+  }, []);
+
+  const handleSubmit = async () => {
+    try {
+      await contabilidadAPI.createPoliza(formData);
+      onSubmit('success', 'Póliza creada correctamente');
+    } catch (error) {
+      onSubmit('error', 'Error al crear la póliza');
+    }
+  };
+
+  const renderStepContent = (step) => {
+    switch (step) {
+      case 0:
+        return (
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Folio"
+                value={formData.folio}
+                onChange={(e) => setFormData({...formData, folio: e.target.value})}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
+                <DatePicker
+                  label="Fecha"
+                  value={formData.fecha}
+                  onChange={(date) => setFormData({...formData, fecha: date})}
+                  renderInput={(params) => <TextField fullWidth {...params} />}
+                />
+              </LocalizationProvider>
+            </Grid>
+            {/* Más campos... */}
+          </Grid>
+        );
+      // Otros steps...
+      default:
+        return <div>Paso no definido</div>;
+    }
+  };
+
+  return (
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Paper sx={{ p: 3 }}>
+        <Typography variant="h4" gutterBottom>
+          {initialData ? 'Editar' : 'Nueva'} Póliza Contable
+        </Typography>
+        
+        <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
+          {steps.map((label) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+
+        {renderStepContent(activeStep)}
+
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
+          {activeStep > 0 && (
+            <Button onClick={() => setActiveStep(activeStep - 1)} sx={{ mr: 1 }}>
+              Anterior
+            </Button>
+          )}
+          {activeStep < steps.length - 1 ? (
+            <Button variant="contained" onClick={() => setActiveStep(activeStep + 1)}>
+              Siguiente
+            </Button>
+          ) : (
+            <Button variant="contained" onClick={handleSubmit}>
+              {initialData ? 'Actualizar' : 'Crear'} Póliza
+            </Button>
+          )}
+        </Box>
+      </Paper>
+    </Container>
+  );
+};
+
+export default PolizaForm;
+
+
+###Docker de produccion:
+
+# docker-compose.yml
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: contabilidad_db
+      POSTGRES_USER: contabilidad_user
+      POSTGRES_PASSWORD: contabilidad_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: ./backend
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://contabilidad_user:contabilidad_pass@db:5432/contabilidad_db
+      - DEBUG=1
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend
+    command: npm start
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000/api
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

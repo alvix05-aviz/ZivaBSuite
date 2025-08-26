@@ -1,0 +1,47 @@
+{% load math_extras %}
+<div class="tree-item" style="margin-left: {{ nivel|mul:20 }}px;">
+    <div class="flex items-center justify-between py-3 border-b border-gray-100 hover:bg-gray-50">
+        <div class="flex items-center">
+            <div class="flex items-center mr-3">
+                {% if centro.subcentros.count > 0 %}
+                    <button onclick="toggleSubcentros(this)" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-chevron-right transform transition-transform"></i>
+                    </button>
+                {% else %}
+                    <i class="fas fa-circle text-xs text-gray-300 ml-2"></i>
+                {% endif %}
+            </div>
+            <div class="flex items-center">
+                <div class="w-4 h-4 rounded bg-{{ centro.color_interfaz }}-500 mr-3"></div>
+                <div>
+                    <div class="font-medium text-gray-900">{{ centro.codigo }} - {{ centro.nombre }}</div>
+                    <div class="text-sm text-gray-500">
+                        {{ centro.tipo.nombre }} 
+                        {% if not centro.permite_movimientos %}
+                            · <span class="text-orange-600">Solo agrupación</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2">
+            <a href="{% url 'centro-costo-edit' centro.id %}" class="text-indigo-600 hover:text-indigo-900">
+                <i class="fas fa-edit"></i>
+            </a>
+            <button onclick="eliminarCentro({{ centro.id }})" class="text-red-600 hover:text-red-900">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Subcentros -->
+    {% if centro.subcentros.count > 0 %}
+        <div class="subcentros hidden">
+            {% for subcentro in centro.subcentros.all %}
+                {% if subcentro.activo %}
+                    {% include 'centros_costo/centro_tree_item.html' with centro=subcentro nivel=nivel|add:1 %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>

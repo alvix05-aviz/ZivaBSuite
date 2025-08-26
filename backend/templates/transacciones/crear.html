@@ -1,0 +1,410 @@
+{% extends 'base.html' %}
+
+{% block title %}Nueva Transacción - ZivaBSuite{% endblock %}
+
+{% block content %}
+<div class="py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex items-center space-x-4 mb-4">
+                <a href="/transacciones/" class="text-indigo-600 hover:text-indigo-900">
+                    <i class="fas fa-arrow-left text-xl"></i>
+                </a>
+                <h1 class="text-3xl font-bold text-gray-900">Nueva Transacción</h1>
+            </div>
+            <p class="text-sm text-gray-500">{{ empresa.nombre }} - Folio: {{ proximo_folio }}</p>
+        </div>
+
+        <!-- Messages -->
+        {% if messages %}
+            {% for message in messages %}
+            <div class="mb-4 p-4 rounded-md {% if message.tags == 'error' %}bg-red-50 border border-red-200 text-red-700{% else %}bg-green-50 border border-green-200 text-green-700{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Form -->
+        <form method="post" class="bg-white shadow rounded-lg">
+            {% csrf_token %}
+            
+            <!-- Transaction Header -->
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">Información General</h3>
+            </div>
+            
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Folio</label>
+                        <input type="text" value="{{ proximo_folio }}" readonly 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Fecha *</label>
+                        <input type="date" name="fecha" value="{{ fecha_hoy }}" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tipo *</label>
+                        <select name="tipo" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">Seleccionar tipo...</option>
+                            {% for valor, nombre in tipos_disponibles %}
+                                <option value="{{ valor }}">{{ nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Concepto *</label>
+                    <textarea name="concepto" rows="2" required placeholder="Descripción de la transacción..."
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                </div>
+            </div>
+
+            <!-- Accounting Entries -->
+            <div class="px-6 py-4 border-t border-b border-gray-200 bg-gray-50">
+                <h3 class="text-lg font-medium text-gray-900">Movimientos Contables</h3>
+                <p class="text-sm text-gray-500 mt-1">Los totales de debe y haber deben ser iguales</p>
+            </div>
+
+            <div class="p-6">
+                <!-- Debe Section -->
+                <div class="mb-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-md font-medium text-gray-900">
+                            <i class="fas fa-plus text-green-600 mr-2"></i>Cargos (Debe)
+                        </h4>
+                        <button type="button" onclick="agregarFilaDebe()" 
+                                class="text-sm bg-green-100 text-green-700 px-3 py-1 rounded-md hover:bg-green-200">
+                            <i class="fas fa-plus mr-1"></i>Agregar
+                        </button>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full" id="tabla-debe">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Cuenta</th>
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Centro Costo</th>
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Proyecto</th>
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Concepto</th>
+                                    <th class="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase">Monto</th>
+                                    <th class="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-t">
+                                    <td class="px-3 py-2">
+                                        <select name="cuenta_debe[]" required 
+                                                class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                                            <option value="">Seleccionar cuenta...</option>
+                                            {% for cuenta in cuentas %}
+                                            <option value="{{ cuenta.id }}">{{ cuenta.codigo }} - {{ cuenta.nombre }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td class="px-3 py-2">
+                                        <select name="centro_costo_debe[]" 
+                                                class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                                            <option value="">Sin centro...</option>
+                                            {% for centro in centros_costo %}
+                                            <option value="{{ centro.id }}">{{ centro.codigo }} - {{ centro.nombre }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td class="px-3 py-2">
+                                        <select name="proyecto_debe[]" 
+                                                class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                                            <option value="">Sin proyecto...</option>
+                                            {% for proyecto in proyectos %}
+                                            <option value="{{ proyecto.id }}">{{ proyecto.codigo }} - {{ proyecto.nombre }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td class="px-3 py-2">
+                                        <input type="text" name="concepto_debe[]" 
+                                               class="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                                               placeholder="Concepto específico...">
+                                    </td>
+                                    <td class="px-3 py-2">
+                                        <input type="number" name="monto_debe[]" step="0.01" min="0" required
+                                               onchange="calcularTotales()" 
+                                               class="w-full px-2 py-1 border border-gray-300 rounded text-sm text-right">
+                                    </td>
+                                    <td class="px-3 py-2 text-center">
+                                        <button type="button" onclick="eliminarFila(this)" 
+                                                class="text-red-600 hover:text-red-900">
+                                            <i class="fas fa-trash text-sm"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="mt-2 text-right">
+                        <span class="text-sm font-medium">Total Debe: $<span id="total-debe">0.00</span></span>
+                    </div>
+                </div>
+
+                <!-- Haber Section -->
+                <div class="mb-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-md font-medium text-gray-900">
+                            <i class="fas fa-minus text-red-600 mr-2"></i>Abonos (Haber)
+                        </h4>
+                        <button type="button" onclick="agregarFilaHaber()" 
+                                class="text-sm bg-red-100 text-red-700 px-3 py-1 rounded-md hover:bg-red-200">
+                            <i class="fas fa-plus mr-1"></i>Agregar
+                        </button>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full" id="tabla-haber">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Cuenta</th>
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Centro Costo</th>
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Proyecto</th>
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Concepto</th>
+                                    <th class="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase">Monto</th>
+                                    <th class="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-t">
+                                    <td class="px-3 py-2">
+                                        <select name="cuenta_haber[]" required 
+                                                class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                                            <option value="">Seleccionar cuenta...</option>
+                                            {% for cuenta in cuentas %}
+                                            <option value="{{ cuenta.id }}">{{ cuenta.codigo }} - {{ cuenta.nombre }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td class="px-3 py-2">
+                                        <select name="centro_costo_haber[]" 
+                                                class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                                            <option value="">Sin centro...</option>
+                                            {% for centro in centros_costo %}
+                                            <option value="{{ centro.id }}">{{ centro.codigo }} - {{ centro.nombre }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td class="px-3 py-2">
+                                        <select name="proyecto_haber[]" 
+                                                class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                                            <option value="">Sin proyecto...</option>
+                                            {% for proyecto in proyectos %}
+                                            <option value="{{ proyecto.id }}">{{ proyecto.codigo }} - {{ proyecto.nombre }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td class="px-3 py-2">
+                                        <input type="text" name="concepto_haber[]" 
+                                               class="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                                               placeholder="Concepto específico...">
+                                    </td>
+                                    <td class="px-3 py-2">
+                                        <input type="number" name="monto_haber[]" step="0.01" min="0" required
+                                               onchange="calcularTotales()" 
+                                               class="w-full px-2 py-1 border border-gray-300 rounded text-sm text-right">
+                                    </td>
+                                    <td class="px-3 py-2 text-center">
+                                        <button type="button" onclick="eliminarFila(this)" 
+                                                class="text-red-600 hover:text-red-900">
+                                            <i class="fas fa-trash text-sm"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="mt-2 text-right">
+                        <span class="text-sm font-medium">Total Haber: $<span id="total-haber">0.00</span></span>
+                    </div>
+                </div>
+
+                <!-- Balance Check -->
+                <div class="bg-gray-100 p-4 rounded-md mb-6">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium">Diferencia:</span>
+                        <span id="diferencia" class="text-sm font-bold">$0.00</span>
+                    </div>
+                    <div id="balance-status" class="text-xs mt-1"></div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex justify-end space-x-4">
+                    <a href="/transacciones/" 
+                       class="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">
+                        Cancelar
+                    </a>
+                    <button type="submit" id="btn-guardar" disabled
+                            class="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Guardar Transacción
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+const cuentasOptions = `{% for cuenta in cuentas %}<option value="{{ cuenta.id }}">{{ cuenta.codigo }} - {{ cuenta.nombre }}</option>{% endfor %}`;
+const centrosOptions = `{% for centro in centros_costo %}<option value="{{ centro.id }}">{{ centro.codigo }} - {{ centro.nombre }}</option>{% endfor %}`;
+const proyectosOptions = `{% for proyecto in proyectos %}<option value="{{ proyecto.id }}">{{ proyecto.codigo }} - {{ proyecto.nombre }}</option>{% endfor %}`;
+
+function agregarFilaDebe() {
+    const tabla = document.getElementById('tabla-debe').getElementsByTagName('tbody')[0];
+    const nuevaFila = tabla.insertRow();
+    
+    nuevaFila.innerHTML = `
+        <td class="px-3 py-2">
+            <select name="cuenta_debe[]" required class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                <option value="">Seleccionar cuenta...</option>
+                ${cuentasOptions}
+            </select>
+        </td>
+        <td class="px-3 py-2">
+            <select name="centro_costo_debe[]" class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                <option value="">Sin centro...</option>
+                ${centrosOptions}
+            </select>
+        </td>
+        <td class="px-3 py-2">
+            <select name="proyecto_debe[]" class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                <option value="">Sin proyecto...</option>
+                ${proyectosOptions}
+            </select>
+        </td>
+        <td class="px-3 py-2">
+            <input type="text" name="concepto_debe[]" 
+                   class="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                   placeholder="Concepto específico...">
+        </td>
+        <td class="px-3 py-2">
+            <input type="number" name="monto_debe[]" step="0.01" min="0" required
+                   onchange="calcularTotales()" 
+                   class="w-full px-2 py-1 border border-gray-300 rounded text-sm text-right">
+        </td>
+        <td class="px-3 py-2 text-center">
+            <button type="button" onclick="eliminarFila(this)" 
+                    class="text-red-600 hover:text-red-900">
+                <i class="fas fa-trash text-sm"></i>
+            </button>
+        </td>
+    `;
+    nuevaFila.className = 'border-t';
+}
+
+function agregarFilaHaber() {
+    const tabla = document.getElementById('tabla-haber').getElementsByTagName('tbody')[0];
+    const nuevaFila = tabla.insertRow();
+    
+    nuevaFila.innerHTML = `
+        <td class="px-3 py-2">
+            <select name="cuenta_haber[]" required class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                <option value="">Seleccionar cuenta...</option>
+                ${cuentasOptions}
+            </select>
+        </td>
+        <td class="px-3 py-2">
+            <select name="centro_costo_haber[]" class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                <option value="">Sin centro...</option>
+                ${centrosOptions}
+            </select>
+        </td>
+        <td class="px-3 py-2">
+            <select name="proyecto_haber[]" class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                <option value="">Sin proyecto...</option>
+                ${proyectosOptions}
+            </select>
+        </td>
+        <td class="px-3 py-2">
+            <input type="text" name="concepto_haber[]" 
+                   class="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                   placeholder="Concepto específico...">
+        </td>
+        <td class="px-3 py-2">
+            <input type="number" name="monto_haber[]" step="0.01" min="0" required
+                   onchange="calcularTotales()" 
+                   class="w-full px-2 py-1 border border-gray-300 rounded text-sm text-right">
+        </td>
+        <td class="px-3 py-2 text-center">
+            <button type="button" onclick="eliminarFila(this)" 
+                    class="text-red-600 hover:text-red-900">
+                <i class="fas fa-trash text-sm"></i>
+            </button>
+        </td>
+    `;
+    nuevaFila.className = 'border-t';
+}
+
+function eliminarFila(boton) {
+    const fila = boton.closest('tr');
+    const tabla = fila.closest('tbody');
+    
+    // No permitir eliminar si es la única fila
+    if (tabla.rows.length > 1) {
+        fila.remove();
+        calcularTotales();
+    } else {
+        alert('Debe mantener al menos un movimiento');
+    }
+}
+
+function calcularTotales() {
+    // Calcular total debe
+    const montosDebe = document.querySelectorAll('input[name="monto_debe[]"]');
+    let totalDebe = 0;
+    montosDebe.forEach(input => {
+        if (input.value) {
+            totalDebe += parseFloat(input.value);
+        }
+    });
+    
+    // Calcular total haber
+    const montosHaber = document.querySelectorAll('input[name="monto_haber[]"]');
+    let totalHaber = 0;
+    montosHaber.forEach(input => {
+        if (input.value) {
+            totalHaber += parseFloat(input.value);
+        }
+    });
+    
+    // Actualizar displays
+    document.getElementById('total-debe').textContent = totalDebe.toFixed(2);
+    document.getElementById('total-haber').textContent = totalHaber.toFixed(2);
+    
+    const diferencia = Math.abs(totalDebe - totalHaber);
+    document.getElementById('diferencia').textContent = '$' + diferencia.toFixed(2);
+    
+    // Validar balance
+    const statusElement = document.getElementById('balance-status');
+    const btnGuardar = document.getElementById('btn-guardar');
+    
+    if (diferencia < 0.01 && totalDebe > 0 && totalHaber > 0) {
+        statusElement.textContent = '✅ La transacción está balanceada';
+        statusElement.className = 'text-xs mt-1 text-green-600';
+        btnGuardar.disabled = false;
+        document.getElementById('diferencia').className = 'text-sm font-bold text-green-600';
+    } else {
+        statusElement.textContent = '⚠️ Debe = Haber para poder guardar';
+        statusElement.className = 'text-xs mt-1 text-red-600';
+        btnGuardar.disabled = true;
+        document.getElementById('diferencia').className = 'text-sm font-bold text-red-600';
+    }
+}
+
+// Inicializar cálculos al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    calcularTotales();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,17 @@
+-r base.txt
+
+# Production server
+gunicorn==21.2.0
+whitenoise==6.6.0
+
+# Monitoring & Logging
+sentry-sdk==1.38.0
+django-health-check==3.17.0
+
+# Performance
+django-cachalot==2.6.1
+hiredis==2.2.3
+
+# Security
+django-csp==3.7
+django-security==0.17.0

@@ -1,0 +1,437 @@
+{% extends 'base.html' %}
+
+{% block title %}Configuración del Catálogo - ZivaBSuite{% endblock %}
+
+{% block content %}
+<div class="py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl">
+                        <i class="fas fa-list-alt text-green-600 mr-3"></i>Configuración del Catálogo de Cuentas
+                    </h2>
+                    <p class="mt-1 text-sm text-gray-500">
+                        Configura la estructura contable de {{ empresa_actual }}
+                    </p>
+                </div>
+                <div>
+                    <a href="{% url 'configuracion' %}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                        <i class="fas fa-arrow-left mr-2"></i>Volver
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Configuration Tabs -->
+        <div class="mb-6">
+            <nav class="flex space-x-8" aria-label="Tabs">
+                <button onclick="mostrarTab('tipos')" id="tab-tipos" class="whitespace-nowrap py-2 px-1 border-b-2 border-indigo-500 font-medium text-sm text-indigo-600">
+                    Tipos de Cuenta
+                </button>
+                <button onclick="mostrarTab('estructura')" id="tab-estructura" class="whitespace-nowrap py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                    Estructura y Niveles
+                </button>
+                <button onclick="mostrarTab('plantillas')" id="tab-plantillas" class="whitespace-nowrap py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                    Plantillas Predefinidas
+                </button>
+                <button onclick="mostrarTab('importar')" id="tab-importar" class="whitespace-nowrap py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                    Importar/Exportar
+                </button>
+            </nav>
+        </div>
+        
+        <!-- Tab: Tipos de Cuenta -->
+        <div id="content-tipos" class="tab-content">
+            <div class="bg-white shadow rounded-lg p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-medium">Tipos de Cuenta Configurados</h3>
+                    <button onclick="agregarTipoCuenta()" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700">
+                        <i class="fas fa-plus mr-2"></i>Nuevo Tipo
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-medium text-gray-900">ACTIVO</h4>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">Activo</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3">Recursos económicos de la empresa</p>
+                        <div class="text-xs text-gray-500">
+                            <div>Naturaleza: <strong>DEUDORA</strong></div>
+                            <div>Nivel: <strong>1</strong></div>
+                            <div>Cuentas: <strong>{{ stats.activos }}</strong></div>
+                        </div>
+                        <div class="mt-3 flex space-x-2">
+                            <button onclick="editarTipo('ACTIVO')" class="text-indigo-600 hover:text-indigo-900 text-sm">
+                                <i class="fas fa-edit mr-1"></i>Editar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-medium text-gray-900">PASIVO</h4>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">Activo</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3">Obligaciones y deudas de la empresa</p>
+                        <div class="text-xs text-gray-500">
+                            <div>Naturaleza: <strong>ACREEDORA</strong></div>
+                            <div>Nivel: <strong>2</strong></div>
+                            <div>Cuentas: <strong>{{ stats.pasivos }}</strong></div>
+                        </div>
+                        <div class="mt-3 flex space-x-2">
+                            <button onclick="editarTipo('PASIVO')" class="text-indigo-600 hover:text-indigo-900 text-sm">
+                                <i class="fas fa-edit mr-1"></i>Editar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-medium text-gray-900">CAPITAL</h4>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">Activo</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3">Patrimonio de los propietarios</p>
+                        <div class="text-xs text-gray-500">
+                            <div>Naturaleza: <strong>ACREEDORA</strong></div>
+                            <div>Nivel: <strong>3</strong></div>
+                            <div>Cuentas: <strong>{{ stats.capital }}</strong></div>
+                        </div>
+                        <div class="mt-3 flex space-x-2">
+                            <button onclick="editarTipo('CAPITAL')" class="text-indigo-600 hover:text-indigo-900 text-sm">
+                                <i class="fas fa-edit mr-1"></i>Editar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-medium text-gray-900">INGRESO</h4>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">Activo</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3">Ingresos por ventas y servicios</p>
+                        <div class="text-xs text-gray-500">
+                            <div>Naturaleza: <strong>ACREEDORA</strong></div>
+                            <div>Nivel: <strong>4</strong></div>
+                            <div>Cuentas: <strong>{{ stats.ingresos }}</strong></div>
+                        </div>
+                        <div class="mt-3 flex space-x-2">
+                            <button onclick="editarTipo('INGRESO')" class="text-indigo-600 hover:text-indigo-900 text-sm">
+                                <i class="fas fa-edit mr-1"></i>Editar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-medium text-gray-900">GASTO</h4>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">Activo</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3">Gastos operativos y administrativos</p>
+                        <div class="text-xs text-gray-500">
+                            <div>Naturaleza: <strong>DEUDORA</strong></div>
+                            <div>Nivel: <strong>5</strong></div>
+                            <div>Cuentas: <strong>{{ stats.gastos }}</strong></div>
+                        </div>
+                        <div class="mt-3 flex space-x-2">
+                            <button onclick="editarTipo('GASTO')" class="text-indigo-600 hover:text-indigo-900 text-sm">
+                                <i class="fas fa-edit mr-1"></i>Editar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-medium text-gray-900">COSTO</h4>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">Activo</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3">Costos de ventas y producción</p>
+                        <div class="text-xs text-gray-500">
+                            <div>Naturaleza: <strong>DEUDORA</strong></div>
+                            <div>Nivel: <strong>6</strong></div>
+                            <div>Cuentas: <strong>{{ stats.costos }}</strong></div>
+                        </div>
+                        <div class="mt-3 flex space-x-2">
+                            <button onclick="editarTipo('COSTO')" class="text-indigo-600 hover:text-indigo-900 text-sm">
+                                <i class="fas fa-edit mr-1"></i>Editar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab: Estructura y Niveles -->
+        <div id="content-estructura" class="tab-content hidden">
+            <div class="bg-white shadow rounded-lg p-6">
+                <h3 class="text-lg font-medium mb-4">Configuración de Estructura</h3>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-medium text-gray-900 mb-3">Configuración de Niveles</h4>
+                        <div class="space-y-4">
+                            <div class="border border-gray-200 rounded p-4">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <div class="font-medium">Nivel 1: Mayor</div>
+                                        <div class="text-sm text-gray-600">Ej: 1, 2, 3, 4, 5, 6</div>
+                                    </div>
+                                    <div class="text-sm text-gray-500">1 dígito</div>
+                                </div>
+                            </div>
+                            <div class="border border-gray-200 rounded p-4">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <div class="font-medium">Nivel 2: SubmMayor</div>
+                                        <div class="text-sm text-gray-600">Ej: 1.1, 1.2, 2.1</div>
+                                    </div>
+                                    <div class="text-sm text-gray-500">3 dígitos</div>
+                                </div>
+                            </div>
+                            <div class="border border-gray-200 rounded p-4">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <div class="font-medium">Nivel 3: Cuenta</div>
+                                        <div class="text-sm text-gray-600">Ej: 1.1.1, 1.1.2</div>
+                                    </div>
+                                    <div class="text-sm text-gray-500">5 dígitos</div>
+                                </div>
+                            </div>
+                            <div class="border border-gray-200 rounded p-4">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <div class="font-medium">Nivel 4: Subcuenta</div>
+                                        <div class="text-sm text-gray-600">Ej: 1.1.1.1, 1.1.1.2</div>
+                                    </div>
+                                    <div class="text-sm text-gray-500">7 dígitos</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <button class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                                <i class="fas fa-save mr-2"></i>Actualizar Configuración
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-medium text-gray-900 mb-3">Vista Previa de Estructura</h4>
+                        <div class="border border-gray-200 rounded p-4 bg-gray-50">
+                            <div class="font-mono text-sm space-y-1">
+                                <div class="font-bold">1 - ACTIVO</div>
+                                <div class="ml-4">1.1 - ACTIVO CIRCULANTE</div>
+                                <div class="ml-8 text-green-600">1.1.1 - Caja</div>
+                                <div class="ml-8 text-green-600">1.1.2 - Bancos</div>
+                                <div class="ml-12 text-blue-600">1.1.2.1 - Banco Nacional</div>
+                                <div class="ml-12 text-blue-600">1.1.2.2 - Banco Regional</div>
+                                <div class="ml-4">1.2 - ACTIVO FIJO</div>
+                                <div class="ml-8 text-green-600">1.2.1 - Mobiliario</div>
+                                <div class="ml-8 text-green-600">1.2.2 - Equipo de Cómputo</div>
+                                <div class="font-bold mt-3">2 - PASIVO</div>
+                                <div class="ml-4">2.1 - PASIVO CIRCULANTE</div>
+                                <div class="ml-8 text-green-600">2.1.1 - Proveedores</div>
+                                <div class="ml-8 text-green-600">2.1.2 - Acreedores</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 text-sm text-gray-600">
+                            <div class="flex items-center mb-1">
+                                <div class="w-3 h-3 bg-gray-800 rounded mr-2"></div>
+                                <span>Nivel 1: Tipo de Cuenta</span>
+                            </div>
+                            <div class="flex items-center mb-1">
+                                <div class="w-3 h-3 bg-gray-600 rounded mr-2"></div>
+                                <span>Nivel 2: Grupo</span>
+                            </div>
+                            <div class="flex items-center mb-1">
+                                <div class="w-3 h-3 bg-green-600 rounded mr-2"></div>
+                                <span>Nivel 3: Cuenta (Afectable)</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-blue-600 rounded mr-2"></div>
+                                <span>Nivel 4: Subcuenta</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab: Plantillas -->
+        <div id="content-plantillas" class="tab-content hidden">
+            <div class="bg-white shadow rounded-lg p-6">
+                <h3 class="text-lg font-medium mb-4">Plantillas Predefinidas</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-store text-blue-600 text-xl"></i>
+                            </div>
+                            <h4 class="font-medium text-gray-900 mb-2">Empresa Comercial</h4>
+                            <p class="text-sm text-gray-600 mb-4">Para empresas dedicadas a la compra-venta de mercancías</p>
+                            <button onclick="aplicarPlantilla('comercial')" class="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+                                <i class="fas fa-download mr-2"></i>Aplicar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-concierge-bell text-green-600 text-xl"></i>
+                            </div>
+                            <h4 class="font-medium text-gray-900 mb-2">Empresa de Servicios</h4>
+                            <p class="text-sm text-gray-600 mb-4">Para empresas que brindan servicios profesionales</p>
+                            <button onclick="aplicarPlantilla('servicios')" class="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700">
+                                <i class="fas fa-download mr-2"></i>Aplicar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-industry text-purple-600 text-xl"></i>
+                            </div>
+                            <h4 class="font-medium text-gray-900 mb-2">Empresa Industrial</h4>
+                            <p class="text-sm text-gray-600 mb-4">Para empresas manufactureras y de producción</p>
+                            <button onclick="aplicarPlantilla('industrial')" class="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700">
+                                <i class="fas fa-download mr-2"></i>Aplicar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-yellow-800">Advertencia</h3>
+                            <div class="mt-2 text-sm text-yellow-700">
+                                <p>Aplicar una plantilla eliminará todas las cuentas existentes y las reemplazará con la estructura predefinida. Esta acción no se puede deshacer.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab: Importar/Exportar -->
+        <div id="content-importar" class="tab-content hidden">
+            <div class="space-y-6">
+                <!-- Exportar -->
+                <div class="bg-white shadow rounded-lg p-6">
+                    <h3 class="text-lg font-medium mb-4">Exportar Catálogo</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <button onclick="exportarCatalogo('excel')" class="flex items-center justify-center px-4 py-2 border border-green-300 rounded-md shadow-sm bg-white text-green-700 hover:bg-green-50">
+                            <i class="fas fa-file-excel mr-2"></i>Exportar a Excel
+                        </button>
+                        <button onclick="exportarCatalogo('csv')" class="flex items-center justify-center px-4 py-2 border border-blue-300 rounded-md shadow-sm bg-white text-blue-700 hover:bg-blue-50">
+                            <i class="fas fa-file-csv mr-2"></i>Exportar a CSV
+                        </button>
+                        <button onclick="exportarCatalogo('pdf')" class="flex items-center justify-center px-4 py-2 border border-red-300 rounded-md shadow-sm bg-white text-red-700 hover:bg-red-50">
+                            <i class="fas fa-file-pdf mr-2"></i>Exportar a PDF
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Importar -->
+                <div class="bg-white shadow rounded-lg p-6">
+                    <h3 class="text-lg font-medium mb-4">Importar Catálogo</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Archivo</label>
+                            <input type="file" id="archivo-importar" accept=".xlsx,.csv" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                        </div>
+                        <div>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="reemplazar-existentes" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <span class="ml-2 text-sm text-gray-700">Reemplazar cuentas existentes</span>
+                            </label>
+                        </div>
+                        <div>
+                            <button onclick="importarCatalogo()" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                                <i class="fas fa-upload mr-2"></i>Importar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-info-circle text-blue-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-blue-800">Formato requerido</h3>
+                                <div class="mt-2 text-sm text-blue-700">
+                                    <p>El archivo debe contener las columnas: Código, Nombre, Tipo, Naturaleza, Afectable (Sí/No)</p>
+                                    <p class="mt-1"><a href="#" onclick="descargarPlantilla()" class="underline">Descargar plantilla de ejemplo</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function mostrarTab(tabName) {
+    // Ocultar todos los tabs
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.add('hidden');
+    });
+    
+    // Mostrar el tab seleccionado
+    document.getElementById('content-' + tabName).classList.remove('hidden');
+    
+    // Actualizar estilos de los botones
+    document.querySelectorAll('nav button').forEach(btn => {
+        btn.classList.remove('border-indigo-500', 'text-indigo-600');
+        btn.classList.add('border-transparent', 'text-gray-500');
+    });
+    
+    document.getElementById('tab-' + tabName).classList.remove('border-transparent', 'text-gray-500');
+    document.getElementById('tab-' + tabName).classList.add('border-indigo-500', 'text-indigo-600');
+}
+
+function agregarTipoCuenta() {
+    alert('Funcionalidad para agregar tipo de cuenta - En desarrollo');
+}
+
+function editarTipo(tipo) {
+    alert(`Editar tipo ${tipo} - En desarrollo`);
+}
+
+function aplicarPlantilla(tipo) {
+    if (confirm(`¿Está seguro de que desea aplicar la plantilla ${tipo}? Esta acción eliminará todas las cuentas existentes.`)) {
+        alert(`Aplicando plantilla ${tipo} - En desarrollo`);
+    }
+}
+
+function exportarCatalogo(formato) {
+    alert(`Exportando catálogo en formato ${formato} - En desarrollo`);
+}
+
+function importarCatalogo() {
+    const archivo = document.getElementById('archivo-importar').files[0];
+    if (!archivo) {
+        alert('Por favor seleccione un archivo');
+        return;
+    }
+    alert('Importando catálogo - En desarrollo');
+}
+
+function descargarPlantilla() {
+    alert('Descargando plantilla - En desarrollo');
+}
+</script>
+{% endblock %}

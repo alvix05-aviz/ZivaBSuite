@@ -1,0 +1,90 @@
+Catalogo servicios:
+
+1010|Caja|Deudora|Efectivo y equivalentes
+1020|Bancos|Deudora|Efectivo y equivalentes
+1030|Inversiones temporales|Deudora|Inversión
+1040|Cuentas por cobrar clientes|Deudora|Operación
+1050|Anticipos a proveedores|Deudora|Operación
+1060|Gastos pagados por anticipado|Deudora|Operación
+1070|Propiedad, planta y equipo|Deudora|Inversión
+1080|Activos intangibles|Deudora|Inversión
+2010|Proveedores|Acreedora|Operación
+2020|Acreedores diversos|Acreedora|Operación/Financiación
+2030|Impuestos por pagar|Acreedora|Operación
+2040|Préstamos bancarios corto plazo|Acreedora|Financiación
+2050|Cuentas por pagar empleados|Acreedora|Operación
+2060|Provisiones|Acreedora|Operación
+3010|Capital social|Acreedora|Financiación
+3020|Reservas legales|Acreedora|Financiación
+3030|Resultados acumulados|Acreedora|Financiación
+3040|Resultado del ejercicio|Acreedora|Operación
+4010|Ingresos por servicios|Acreedora|Operación
+4020|Ingresos por mantenimiento|Acreedora|Operación
+5010|Costo de servicios prestados|Deudora|Operación
+5020|Gastos de personal|Deudora|Operación
+5030|Gastos de oficina|Deudora|Operación
+5040|Gastos de tecnología|Deudora|Operación
+5050|Gastos de ventas|Deudora|Operación
+5060|Gastos administrativos|Deudora|Operación
+5070|Gastos financieros|Deudora|Operación/Financiación
+5080|Depreciación y amortización|Deudora|Operación (Ajuste no efectivo)
+
+Empresa comercializadora:
+
+1010|Caja y bancos|Deudora|Efectivo y equivalentes
+1020|Inventarios de mercancías|Deudora|Operación
+1030|Cuentas por cobrar clientes|Deudora|Operación
+1040|Deudores diversos|Deudora|Operación
+1050|Almacenes y equipos|Deudora|Inversión
+1060|Vehículos de reparto|Deudora|Inversión
+1070|Mobiliario y equipo oficina|Deudora|Inversión
+2010|Proveedores|Acreedora|Operación
+2020|Documentos por pagar|Acreedora|Financiación
+2030|Acreedores diversos|Acreedora|Operación/Financiación
+2040|Impuestos por pagar|Acreedora|Operación
+2050|Préstamos bancarios|Acreedora|Financiación
+3010|Capital social|Acreedora|Financiación
+3020|Utilidades retenidas|Acreedora|Financiación
+3030|Resultado del ejercicio|Acreedora|Operación
+4010|Ventas de mercancías|Acreedora|Operación
+4020|Devoluciones en ventas|Deudora|Operación
+4030|Descuentos comerciales|Deudora|Operación
+4040|Ingresos financieros|Acreedora|Operación
+5010|Costo de ventas|Deudora|Operación
+5020|Gastos de venta|Deudora|Operación
+5030|Gastos de administración|Deudora|Operación
+5040|Gastos de distribución|Deudora|Operación
+5050|Gastos financieros|Deudora|Operación/Financiación
+5060|Depreciación|Deudora|Operación (Ajuste no efectivo)
+
+Empresa de manufactura:
+
+1010|Efectivo y equivalentes|Deudora|Efectivo y equivalentes
+1021|Inventario - Materias primas|Deudora|Operación
+1022|Inventario - Productos en proceso|Deudora|Operación
+1023|Inventario - Productos terminados|Deudora|Operación
+1030|Cuentas por cobrar|Deudora|Operación
+1041|Maquinaria|Deudora|Inversión
+1042|Edificios|Deudora|Inversión
+1043|Equipos de producción|Deudora|Inversión
+2010|Proveedores materias primas|Acreedora|Operación
+2020|Acreedores varios|Acreedora|Operación/Financiación
+2030|Impuestos por pagar|Acreedora|Operación
+2040|Préstamos a corto plazo|Acreedora|Financiación
+2050|Obligaciones laborales|Acreedora|Operación
+3010|Capital social|Acreedora|Financiación
+3020|Superávit de capital|Acreedora|Financiación
+3030|Utilidades acumuladas|Acreedora|Financiación
+3040|Resultado del período|Acreedora|Operación
+4010|Ventas de productos|Acreedora|Operación
+4020|Devoluciones en ventas|Deudora|Operación
+4030|Descuentos concedidos|Deudora|Operación
+4040|Otros ingresos operativos|Acreedora|Operación
+5011|Costo - Materia prima directa|Deudora|Operación
+5012|Costo - Mano de obra directa|Deudora|Operación
+5013|Costos indirectos de fabricación|Deudora|Operación
+5020|Gastos de operación|Deudora|Operación
+5030|Gastos de venta|Deudora|Operación
+5040|Gastos administrativos|Deudora|Operación
+5050|Gastos financieros|Deudora|Operación/Financiación
+5060|Depreciación y amortización|Deudora|Operación (Ajuste no efectivo)

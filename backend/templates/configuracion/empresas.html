@@ -1,0 +1,591 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestión de Empresas - ZivaBSuite{% endblock %}
+
+{% block content %}
+<div class="py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl">
+                        <i class="fas fa-building text-blue-600 mr-3"></i>Gestión de Empresas
+                    </h2>
+                    <p class="mt-1 text-sm text-gray-500">
+                        Administra las empresas del sistema
+                    </p>
+                </div>
+                <div>
+                    <a href="{% url 'configuracion' %}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                        <i class="fas fa-arrow-left mr-2"></i>Volver
+                    </a>
+                    <button onclick="mostrarModalNuevaEmpresa()" class="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                        <i class="fas fa-plus mr-2"></i>Nueva Empresa
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Lista de Empresas -->
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Empresa</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">RFC</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Régimen</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuarios</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for empresa in empresas %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div>
+                                <div class="text-sm font-medium text-gray-900">{{ empresa.nombre }}</div>
+                                <div class="text-sm text-gray-500">{{ empresa.nombre_comercial|default:"-" }}</div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ empresa.rfc|default:"-" }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">-</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                {{ empresa.usuarios_asignados.count }} usuarios
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {% if empresa.activo %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                                {% if empresa.activo %}Activa{% else %}Inactiva{% endif %}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button onclick="editarEmpresa({{ empresa.id }})" class="text-indigo-600 hover:text-indigo-900 mr-3">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button onclick="gestionarUsuarios({{ empresa.id }})" class="text-blue-600 hover:text-blue-900 mr-3">
+                                <i class="fas fa-users"></i> Usuarios
+                            </button>
+                            <button onclick="toggleEmpresa({{ empresa.id }}, {{ empresa.activo|lower }})" class="{% if empresa.activo %}text-red-600 hover:text-red-900{% else %}text-green-600 hover:text-green-900{% endif %}">
+                                <i class="fas fa-{% if empresa.activo %}ban{% else %}check{% endif %}"></i>
+                                {% if empresa.activo %}Desactivar{% else %}Activar{% endif %}
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
+                            No hay empresas registradas
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nueva/Editar Empresa -->
+<div id="modalEmpresa" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+    <div class="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modalTitle">
+                Nueva Empresa
+            </h3>
+            
+            <form id="formEmpresa">
+                <div class="grid grid-cols-1 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Nombre de la Empresa</label>
+                        <input type="text" id="nombre" name="nombre" required
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Razón Social</label>
+                        <input type="text" id="razon_social" name="razon_social"
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">RFC</label>
+                            <input type="text" id="rfc" name="rfc" maxlength="13"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Régimen Fiscal</label>
+                            <select id="regimen_fiscal" name="regimen_fiscal"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                <option value="">Seleccionar...</option>
+                                <option value="601">601 - General de Ley Personas Morales</option>
+                                <option value="603">603 - Personas Morales con Fines no Lucrativos</option>
+                                <option value="605">605 - Sueldos y Salarios</option>
+                                <option value="606">606 - Arrendamiento</option>
+                                <option value="607">607 - Régimen de Enajenación o Adquisición de Bienes</option>
+                                <option value="608">608 - Demás ingresos</option>
+                                <option value="612">612 - Personas Físicas con Actividades Empresariales y Profesionales</option>
+                                <option value="621">621 - Régimen de Incorporación Fiscal</option>
+                                <option value="626">626 - Régimen Simplificado de Confianza</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Dirección</label>
+                        <input type="text" id="direccion" name="direccion"
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Teléfono</label>
+                            <input type="tel" id="telefono" name="telefono"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="email" id="email" name="email"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Website</label>
+                            <input type="url" id="website" name="website"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex justify-end space-x-3">
+                    <button type="button" onclick="cerrarModalEmpresa()" 
+                            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                        Cancelar
+                    </button>
+                    <button type="submit" 
+                            class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Gestión de Usuarios -->
+<div id="modalUsuarios" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+    <div class="relative top-20 mx-auto p-5 border w-full max-w-4xl shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                Gestión de Usuarios - <span id="empresaNombreUsuarios"></span>
+            </h3>
+            
+            <div class="mb-4">
+                <button onclick="mostrarModalAgregarUsuario()" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700">
+                    <i class="fas fa-user-plus mr-2"></i>Agregar Usuario
+                </button>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Usuario</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rol</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaUsuarios" class="bg-white divide-y divide-gray-200">
+                        <!-- Se llena dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="mt-6 flex justify-end">
+                <button type="button" onclick="cerrarModalUsuarios()" 
+                        class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Agregar Usuario -->
+<div id="modalAgregarUsuario" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+    <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                Agregar Usuario a Empresa
+            </h3>
+            
+            <form id="formAgregarUsuario">
+                <div class="grid grid-cols-1 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Email del Usuario</label>
+                        <input type="email" id="emailNuevoUsuario" name="email" required
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                               placeholder="usuario@empresa.com">
+                        <p class="text-xs text-gray-500 mt-1">Se buscará un usuario existente con este email</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Rol en la Empresa</label>
+                        <select id="rolNuevoUsuario" name="rol" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            <option value="">Seleccionar rol...</option>
+                            <option value="ADMINISTRADOR">Administrador</option>
+                            <option value="CONTADOR">Contador</option>
+                            <option value="AUXILIAR">Auxiliar</option>
+                            <option value="AUDITOR">Auditor</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex justify-end space-x-3">
+                    <button type="button" onclick="cerrarModalAgregarUsuario()" 
+                            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                        Cancelar
+                    </button>
+                    <button type="submit" 
+                            class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                        Agregar Usuario
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+let empresaActual = null;
+
+function mostrarModalNuevaEmpresa() {
+    document.getElementById('modalTitle').textContent = 'Nueva Empresa';
+    document.getElementById('formEmpresa').reset();
+    empresaActual = null;
+    document.getElementById('modalEmpresa').classList.remove('hidden');
+}
+
+function editarEmpresa(id) {
+    empresaActual = id;
+    document.getElementById('modalTitle').textContent = 'Editar Empresa';
+    
+    // Cargar datos de la empresa
+    fetch(`/api/empresas/empresas/${id}/`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('nombre').value = data.nombre || '';
+            document.getElementById('razon_social').value = data.nombre_comercial || '';
+            document.getElementById('rfc').value = data.rfc || '';
+            document.getElementById('regimen_fiscal').value = '';
+            document.getElementById('direccion').value = '';
+            document.getElementById('telefono').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('website').value = '';
+            
+            document.getElementById('modalEmpresa').classList.remove('hidden');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al cargar los datos de la empresa');
+        });
+}
+
+function cerrarModalEmpresa() {
+    document.getElementById('modalEmpresa').classList.add('hidden');
+    empresaActual = null;
+}
+
+function cerrarModalUsuarios() {
+    document.getElementById('modalUsuarios').classList.add('hidden');
+}
+
+let empresaActualUsuarios = null;
+
+function mostrarModalAgregarUsuario() {
+    document.getElementById('formAgregarUsuario').reset();
+    document.getElementById('modalAgregarUsuario').classList.remove('hidden');
+}
+
+function cerrarModalAgregarUsuario() {
+    document.getElementById('modalAgregarUsuario').classList.add('hidden');
+}
+
+function cambiarRol(relacionId, nuevoRol) {
+    if (!nuevoRol) return;
+    
+    fetch(`/api/empresas/usuario-empresas/${relacionId}/`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            rol: nuevoRol
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            // Recargar la lista de usuarios
+            if (empresaActualUsuarios) {
+                gestionarUsuarios(empresaActualUsuarios);
+            }
+        } else {
+            alert('Error al cambiar el rol del usuario');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error de conexión al cambiar rol');
+    });
+}
+
+function removerUsuario(relacionId) {
+    if (confirm('¿Está seguro de que desea remover este usuario de la empresa?')) {
+        fetch(`/api/empresas/usuario-empresas/${relacionId}/`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                // Recargar la lista de usuarios
+                if (empresaActualUsuarios) {
+                    gestionarUsuarios(empresaActualUsuarios);
+                }
+                alert('Usuario removido exitosamente');
+            } else {
+                alert('Error al remover el usuario');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error de conexión al remover usuario');
+        });
+    }
+}
+
+function gestionarUsuarios(empresaId) {
+    // Guardar la empresa actual para las funciones de gestión
+    empresaActualUsuarios = empresaId;
+    
+    // Cargar usuarios de la empresa
+    fetch(`/api/empresas/usuario-empresas/?empresa=${empresaId}`)
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Data received:', data);
+            const tabla = document.getElementById('tablaUsuarios');
+            tabla.innerHTML = '';
+            
+            // Manejar respuesta paginada de DRF
+            let usuarios = [];
+            if (Array.isArray(data)) {
+                usuarios = data;
+            } else if (data && Array.isArray(data.results)) {
+                usuarios = data.results;
+            } else {
+                console.error('Formato de respuesta inesperado:', data);
+                throw new Error('Formato de respuesta inesperado');
+            }
+            
+            usuarios.forEach(relacion => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">${relacion.usuario_nombre}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        ${relacion.usuario_email || '-'}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <select onchange="cambiarRol(${relacion.id}, this.value)" class="text-sm rounded border-gray-300">
+                            <option value="PROPIETARIO" ${relacion.rol === 'PROPIETARIO' ? 'selected' : ''}>Propietario</option>
+                            <option value="ADMINISTRADOR" ${relacion.rol === 'ADMINISTRADOR' ? 'selected' : ''}>Administrador</option>
+                            <option value="CONTADOR" ${relacion.rol === 'CONTADOR' ? 'selected' : ''}>Contador</option>
+                            <option value="AUXILIAR" ${relacion.rol === 'AUXILIAR' ? 'selected' : ''}>Auxiliar</option>
+                            <option value="AUDITOR" ${relacion.rol === 'AUDITOR' ? 'selected' : ''}>Auditor</option>
+                        </select>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${relacion.activo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            ${relacion.activo ? 'Activo' : 'Inactivo'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="removerUsuario(${relacion.id})" class="text-red-600 hover:text-red-900">
+                            <i class="fas fa-trash"></i> Remover
+                        </button>
+                    </td>
+                `;
+                tabla.appendChild(tr);
+            });
+            
+            // Obtener nombre de la empresa
+            fetch(`/api/empresas/empresas/${empresaId}/`)
+                .then(response => response.json())
+                .then(empresa => {
+                    document.getElementById('empresaNombreUsuarios').textContent = empresa.nombre;
+                });
+            
+            document.getElementById('modalUsuarios').classList.remove('hidden');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al cargar los usuarios');
+        });
+}
+
+function toggleEmpresa(id, estadoActual) {
+    const nuevoEstado = !estadoActual;
+    const accion = nuevoEstado ? 'activar' : 'desactivar';
+    
+    if (confirm(`¿Está seguro de que desea ${accion} esta empresa?`)) {
+        fetch(`/api/empresas/empresas/${id}/`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                activo: nuevoEstado
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('Error al actualizar el estado de la empresa');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error de conexión');
+        });
+    }
+}
+
+// Manejo del formulario
+document.getElementById('formEmpresa').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+    
+    const url = empresaActual 
+        ? `/api/empresas/empresas/${empresaActual}/`
+        : '/api/empresas/empresas/';
+    
+    const method = empresaActual ? 'PUT' : 'POST';
+    
+    try {
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(data)
+        });
+        
+        if (response.ok) {
+            alert('Empresa guardada exitosamente');
+            window.location.reload();
+        } else {
+            const error = await response.json();
+            alert('Error: ' + JSON.stringify(error));
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error de conexión');
+    }
+});
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Manejador del formulario para agregar usuario
+document.getElementById('formAgregarUsuario').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('emailNuevoUsuario').value;
+    const rol = document.getElementById('rolNuevoUsuario').value;
+    
+    if (!empresaActualUsuarios) {
+        alert('Error: No hay empresa seleccionada');
+        return;
+    }
+    
+    try {
+        // Primero buscar el usuario por email
+        const buscarResponse = await fetch(`/api/core/buscar-usuario/?email=${encodeURIComponent(email)}`, {
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        });
+        
+        let usuarioId;
+        if (buscarResponse.ok) {
+            const userData = await buscarResponse.json();
+            usuarioId = userData.id;
+        } else {
+            alert('Usuario no encontrado. Primero debe crear el usuario en el sistema.');
+            return;
+        }
+        
+        // Crear la relación usuario-empresa
+        const response = await fetch('/api/empresas/usuario-empresas/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                usuario: usuarioId,
+                empresa: empresaActualUsuarios,
+                rol: rol
+            })
+        });
+        
+        if (response.ok) {
+            alert('Usuario agregado exitosamente');
+            cerrarModalAgregarUsuario();
+            // Recargar la lista de usuarios
+            gestionarUsuarios(empresaActualUsuarios);
+        } else {
+            const error = await response.json();
+            alert('Error al agregar usuario: ' + (error.detail || JSON.stringify(error)));
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error de conexión');
+    }
+});
+</script>
+{% endblock %}

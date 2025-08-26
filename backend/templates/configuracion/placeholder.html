@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ seccion.titulo }} - ZivaBSuite{% endblock %}
+
+{% block content %}
+<div class="py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl">
+                        <i class="{{ seccion.icono }} text-{{ seccion.color }}-600 mr-3"></i>{{ seccion.titulo }}
+                    </h2>
+                    <p class="mt-1 text-sm text-gray-500">
+                        {{ seccion.descripcion }} - {{ empresa_actual }}
+                    </p>
+                </div>
+                <div>
+                    <a href="{% url 'configuracion' %}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                        <i class="fas fa-arrow-left mr-2"></i>Volver
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Content Area -->
+        <div class="bg-white shadow rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+                <!-- Under Development Notice -->
+                <div class="text-center py-12">
+                    <div class="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-blue-100">
+                        <i class="{{ seccion.icono }} text-blue-600 text-3xl"></i>
+                    </div>
+                    <h3 class="mt-6 text-2xl font-medium text-gray-900">{{ seccion.titulo }}</h3>
+                    <p class="mt-2 text-lg text-gray-500">Esta sección está en desarrollo</p>
+                    
+                    <div class="mt-8 max-w-2xl mx-auto">
+                        <div class="bg-blue-50 border border-blue-200 rounded-md p-4">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-info-circle text-blue-400"></i>
+                                </div>
+                                <div class="ml-3 text-left">
+                                    <h3 class="text-sm font-medium text-blue-800">Funcionalidades Planeadas</h3>
+                                    <div class="mt-2 text-sm text-blue-700">
+                                        {% if seccion_key == 'transacciones' %}
+                                            <ul class="list-disc list-inside space-y-1">
+                                                <li>Configurar tipos de pólizas personalizados</li>
+                                                <li>Definir secuencias de numeración</li>
+                                                <li>Establecer validaciones específicas por tipo</li>
+                                                <li>Configurar períodos contables</li>
+                                                <li>Definir diarios contables especializados</li>
+                                            </ul>
+                                        {% elif seccion_key == 'centros-costo' %}
+                                            <ul class="list-disc list-inside space-y-1">
+                                                <li>Crear y gestionar departamentos</li>
+                                                <li>Configurar proyectos y subproyectos</li>
+                                                <li>Asignación de costos por centro</li>
+                                                <li>Reportes específicos por centro de costo</li>
+                                                <li>Presupuestos por departamento</li>
+                                            </ul>
+                                        {% elif seccion_key == 'reportes' %}
+                                            <ul class="list-disc list-inside space-y-1">
+                                                <li>Diseñar plantillas personalizadas</li>
+                                                <li>Configurar logos y encabezados</li>
+                                                <li>Formatos de exportación avanzados</li>
+                                                <li>Programación de reportes automáticos</li>
+                                                <li>Distribución por email</li>
+                                            </ul>
+                                        {% elif seccion_key == 'fiscal' %}
+                                            <ul class="list-disc list-inside space-y-1">
+                                                <li>Configuración de impuestos (IVA, ISR, etc.)</li>
+                                                <li>Manejo de regímenes fiscales</li>
+                                                <li>Generación de DIOT</li>
+                                                <li>Integración con facturación electrónica</li>
+                                                <li>Declaraciones automáticas</li>
+                                            </ul>
+                                        {% elif seccion_key == 'seguridad' %}
+                                            <ul class="list-disc list-inside space-y-1">
+                                                <li>Respaldos automáticos programados</li>
+                                                <li>Control de acceso por módulos</li>
+                                                <li>Auditoría completa de cambios</li>
+                                                <li>Políticas de contraseñas</li>
+                                                <li>Logs de seguridad</li>
+                                            </ul>
+                                        {% elif seccion_key == 'integraciones' %}
+                                            <ul class="list-disc list-inside space-y-1">
+                                                <li>Conexión con bancos (web scraping/APIs)</li>
+                                                <li>APIs de terceros (CRM, ERP)</li>
+                                                <li>Importación masiva de datos</li>
+                                                <li>Webhooks para sincronización</li>
+                                                <li>Conectores con software contable</li>
+                                            </ul>
+                                        {% elif seccion_key == 'general' %}
+                                            <ul class="list-disc list-inside space-y-1">
+                                                <li>Configuración de moneda predeterminada</li>
+                                                <li>Ajustes de zona horaria</li>
+                                                <li>Formatos de fecha y número</li>
+                                                <li>Sistema de notificaciones</li>
+                                                <li>Personalización de la interfaz</li>
+                                            </ul>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 flex justify-center space-x-4">
+                        <a href="{% url 'configuracion' %}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                            <i class="fas fa-arrow-left mr-2"></i>
+                            Volver a Configuración
+                        </a>
+                        <button onclick="solicitarFuncionalidad()" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                            <i class="fas fa-lightbulb mr-2"></i>
+                            Solicitar Funcionalidad
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Development Timeline -->
+        <div class="mt-8 bg-white shadow rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                    <i class="fas fa-calendar-alt text-indigo-600 mr-2"></i>
+                    Cronograma de Desarrollo
+                </h3>
+                
+                <div class="flow-root">
+                    <ul class="-mb-8">
+                        <li>
+                            <div class="relative pb-8">
+                                <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+                                <div class="relative flex space-x-3">
+                                    <div>
+                                        <span class="h-8 w-8 rounded-full bg-gray-400 flex items-center justify-center ring-8 ring-white">
+                                            <i class="fas fa-circle text-white text-xs"></i>
+                                        </span>
+                                    </div>
+                                    <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                        <div>
+                                            <p class="text-sm text-gray-500">Análisis de requerimientos <span class="font-medium text-gray-900">completado</span></p>
+                                        </div>
+                                        <div class="text-right text-sm whitespace-nowrap text-gray-500">
+                                            <time>Fase 1</time>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        
+                        <li>
+                            <div class="relative pb-8">
+                                <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+                                <div class="relative flex space-x-3">
+                                    <div>
+                                        <span class="h-8 w-8 rounded-full bg-yellow-400 flex items-center justify-center ring-8 ring-white">
+                                            <i class="fas fa-clock text-white text-xs"></i>
+                                        </span>
+                                    </div>
+                                    <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                        <div>
+                                            <p class="text-sm text-gray-500">Diseño de interfaz <span class="font-medium text-gray-900">en progreso</span></p>
+                                        </div>
+                                        <div class="text-right text-sm whitespace-nowrap text-gray-500">
+                                            <time>Fase 2</time>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        
+                        <li>
+                            <div class="relative pb-8">
+                                <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+                                <div class="relative flex space-x-3">
+                                    <div>
+                                        <span class="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center ring-8 ring-white">
+                                            <i class="fas fa-code text-white text-xs"></i>
+                                        </span>
+                                    </div>
+                                    <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                        <div>
+                                            <p class="text-sm text-gray-500">Desarrollo backend <span class="font-medium text-gray-900">pendiente</span></p>
+                                        </div>
+                                        <div class="text-right text-sm whitespace-nowrap text-gray-500">
+                                            <time>Fase 3</time>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        
+                        <li>
+                            <div class="relative">
+                                <div class="relative flex space-x-3">
+                                    <div>
+                                        <span class="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center ring-8 ring-white">
+                                            <i class="fas fa-check text-white text-xs"></i>
+                                        </span>
+                                    </div>
+                                    <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                        <div>
+                                            <p class="text-sm text-gray-500">Pruebas y lanzamiento <span class="font-medium text-gray-900">pendiente</span></p>
+                                        </div>
+                                        <div class="text-right text-sm whitespace-nowrap text-gray-500">
+                                            <time>Fase 4</time>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function solicitarFuncionalidad() {
+    alert('Funcionalidad para solicitar características específicas - En desarrollo\n\nPuedes contactar al equipo de desarrollo para priorizar esta funcionalidad.');
+}
+</script>
+{% endblock %}

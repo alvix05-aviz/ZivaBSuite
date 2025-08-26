@@ -1,0 +1,620 @@
+{% extends 'base.html' %}
+
+{% block title %}Transacciones - ZivaBSuite{% endblock %}
+
+{% block content %}
+<div class="py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="md:flex md:items-center md:justify-between mb-8">
+            <div class="flex-1 min-w-0">
+                <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl">
+                    Gestión de Transacciones
+                </h2>
+                <p class="mt-1 text-sm text-gray-500">
+                    Administra pólizas contables y movimientos
+                </p>
+            </div>
+            <div class="mt-4 flex md:mt-0 md:ml-4">
+                <button onclick="openNewTransactionModal()" 
+                        class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                    <i class="fas fa-plus mr-2"></i>Nueva Transacción
+                </button>
+            </div>
+        </div>
+        
+        <!-- Filters -->
+        <div class="bg-white rounded-lg shadow mb-6 p-4">
+            <div class="grid grid-cols-1 md:grid-cols-7 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+                    <select id="filtro-estado" onchange="aplicarFiltros()" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <option value="">Todos</option>
+                        <option value="BORRADOR">Borrador</option>
+                        <option value="VALIDADA">Validada</option>
+                        <option value="CONTABILIZADA">Contabilizada</option>
+                        <option value="CANCELADA">Cancelada</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+                    <select id="filtro-tipo" onchange="aplicarFiltros()" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <option value="">Todos</option>
+                        <option value="INGRESO">Ingreso</option>
+                        <option value="EGRESO">Egreso</option>
+                        <option value="DIARIO">Diario</option>
+                        <option value="AJUSTE">Ajuste</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Centro Costo</label>
+                    <select id="filtro-centro" onchange="aplicarFiltros()" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <option value="">Todos</option>
+                        {% for centro in centros_costo %}
+                        <option value="{{ centro.id }}">{{ centro.codigo }} - {{ centro.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Proyecto</label>
+                    <select id="filtro-proyecto" onchange="aplicarFiltros()" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <option value="">Todos</option>
+                        {% for proyecto in proyectos %}
+                        <option value="{{ proyecto.id }}">{{ proyecto.codigo }} - {{ proyecto.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha Desde</label>
+                    <input type="date" id="filtro-fecha-desde" onchange="aplicarFiltros()" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha Hasta</label>
+                    <input type="date" id="filtro-fecha-hasta" onchange="aplicarFiltros()" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+                <div class="flex items-end">
+                    <button onclick="limpiarFiltros()" class="w-full bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition">
+                        <i class="fas fa-eraser mr-2"></i>Limpiar
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Transactions Table -->
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <input type="checkbox" class="rounded border-gray-300">
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Fecha
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Folio
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Concepto
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Tipo
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Centro/Proyecto
+                        </th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Debe
+                        </th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Haber
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Estado
+                        </th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Acciones
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for trans in transacciones %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <input type="checkbox" class="rounded border-gray-300">
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ trans.fecha|date:"d/m/Y" }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600">
+                            {{ trans.folio }}
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-900">
+                            {{ trans.concepto|truncatechars:40 }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                {% if trans.tipo == 'INGRESO' %}bg-green-100 text-green-800
+                                {% elif trans.tipo == 'EGRESO' %}bg-red-100 text-red-800
+                                {% elif trans.tipo == 'DIARIO' %}bg-blue-100 text-blue-800
+                                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                {{ trans.tipo }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                            {% if trans.movimientos.exists %}
+                                {% with trans.movimientos.first as primer_mov %}
+                                    {% if primer_mov.centro_costo %}
+                                        <div class="text-xs text-indigo-600">{{ primer_mov.centro_costo.codigo }}</div>
+                                    {% endif %}
+                                    {% if primer_mov.proyecto %}
+                                        <div class="text-xs text-green-600">{{ primer_mov.proyecto.codigo }}</div>
+                                    {% endif %}
+                                    {% if not primer_mov.centro_costo and not primer_mov.proyecto %}
+                                        <span class="text-gray-400">-</span>
+                                    {% endif %}
+                                {% endwith %}
+                            {% else %}
+                                <span class="text-gray-400">-</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
+                            ${{ trans.total_debe|floatformat:2 }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
+                            ${{ trans.total_haber|floatformat:2 }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                {% if trans.estado == 'CONTABILIZADA' %}bg-green-100 text-green-800
+                                {% elif trans.estado == 'VALIDADA' %}bg-yellow-100 text-yellow-800
+                                {% elif trans.estado == 'CANCELADA' %}bg-red-100 text-red-800
+                                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                {{ trans.estado }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                            <div class="flex justify-center space-x-2">
+                                <button onclick="verTransaccion({{ trans.id }})" class="text-indigo-600 hover:text-indigo-900" title="Ver">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                {% if trans.estado == 'BORRADOR' %}
+                                <button onclick="window.open('/api/transacciones/transacciones/{{ trans.id }}/', '_blank')" 
+                                        class="text-blue-600 hover:text-blue-900" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="cambiarEstadoTransaccion({{ trans.id }}, 'VALIDADA')" 
+                                        class="text-green-600 hover:text-green-900" title="Validar">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                {% elif trans.estado == 'VALIDADA' %}
+                                <button onclick="cambiarEstadoTransaccion({{ trans.id }}, 'CONTABILIZADA')" 
+                                        class="text-green-600 hover:text-green-900" title="Contabilizar">
+                                    <i class="fas fa-book"></i>
+                                </button>
+                                {% elif trans.estado == 'CONTABILIZADA' %}
+                                <button onclick="cambiarEstadoTransaccion({{ trans.id }}, 'CANCELADA')" 
+                                        class="text-red-600 hover:text-red-900" title="Cancelar">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="10" class="px-6 py-12 text-center text-sm text-gray-500">
+                            <i class="fas fa-inbox text-4xl text-gray-300 mb-4"></i>
+                            <p>No hay transacciones registradas</p>
+                            <button onclick="openNewTransactionModal()" 
+                                    class="mt-4 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                                <i class="fas fa-plus mr-2"></i>Crear Primera Transacción
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            {% if transacciones %}
+            <!-- Pagination -->
+            <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+                <div class="flex-1 flex justify-between sm:hidden">
+                    <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        Anterior
+                    </a>
+                    <a href="#" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        Siguiente
+                    </a>
+                </div>
+                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                    <div>
+                        <p class="text-sm text-gray-700">
+                            Mostrando <span class="font-medium">1</span> a <span class="font-medium">10</span> de
+                            <span class="font-medium">{{ transacciones|length }}</span> resultados
+                        </p>
+                    </div>
+                    <div>
+                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                            <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                            <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                1
+                            </a>
+                            <a href="#" class="bg-indigo-50 border-indigo-500 text-indigo-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                2
+                            </a>
+                            <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                3
+                            </a>
+                            <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal para ver detalles de transacción -->
+<div id="ver-transaccion-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-10 mx-auto p-5 border w-4/5 max-w-4xl shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-medium text-gray-900" id="modal-transaccion-titulo">
+                    Detalles de Transacción
+                </h3>
+                <button onclick="cerrarModalTransaccion()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div id="modal-transaccion-content" class="space-y-6">
+                <!-- Content will be populated dynamically -->
+                <div class="text-center py-8">
+                    <i class="fas fa-spinner fa-spin text-2xl text-gray-400 mb-2"></i>
+                    <p class="text-gray-500">Cargando detalles...</p>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 mt-6">
+                <button onclick="cerrarModalTransaccion()" 
+                        class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function openNewTransactionModal() {
+    // Redirigir a la página de creación de transacción vía API
+    window.location.href = '/transacciones/crear/';
+}
+
+// Función para ver detalles de transacción
+async function verTransaccion(transaccionId) {
+    // Mostrar modal y loading
+    document.getElementById('ver-transaccion-modal').classList.remove('hidden');
+    
+    try {
+        const response = await fetch(`/api/transacciones/transacciones/${transaccionId}/`);
+        if (response.ok) {
+            const transaccion = await response.json();
+            mostrarDetallesTransaccion(transaccion);
+        } else {
+            mostrarErrorEnModal('Error al cargar los detalles de la transacción');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarErrorEnModal('Error de conexión al cargar la transacción');
+    }
+}
+
+function mostrarDetallesTransaccion(transaccion) {
+    const titulo = document.getElementById('modal-transaccion-titulo');
+    const content = document.getElementById('modal-transaccion-content');
+    
+    titulo.textContent = `Transacción ${transaccion.folio} - ${transaccion.concepto}`;
+    
+    // Crear contenido del modal
+    const estadoColor = getEstadoColor(transaccion.estado);
+    const tipoColor = getTipoColor(transaccion.tipo);
+    
+    content.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Información General -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h4 class="text-md font-semibold text-gray-900 mb-3">Información General</h4>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Folio:</span>
+                        <span class="font-medium">${transaccion.folio}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Fecha:</span>
+                        <span class="font-medium">${new Date(transaccion.fecha).toLocaleDateString('es-MX')}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Tipo:</span>
+                        <span class="px-2 py-1 rounded text-xs font-medium ${tipoColor}">${transaccion.tipo}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Estado:</span>
+                        <span class="px-2 py-1 rounded text-xs font-medium ${estadoColor}">${transaccion.estado}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Totales -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h4 class="text-md font-semibold text-gray-900 mb-3">Totales</h4>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Total Debe:</span>
+                        <span class="font-medium text-green-600">$${parseFloat(transaccion.total_debe).toFixed(2)}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Total Haber:</span>
+                        <span class="font-medium text-red-600">$${parseFloat(transaccion.total_haber).toFixed(2)}</span>
+                    </div>
+                    <div class="flex justify-between border-t pt-2">
+                        <span class="text-gray-600">Balance:</span>
+                        <span class="font-bold ${Math.abs(transaccion.total_debe - transaccion.total_haber) < 0.01 ? 'text-green-600' : 'text-red-600'}">
+                            ${Math.abs(transaccion.total_debe - transaccion.total_haber) < 0.01 ? '✅ Balanceada' : '⚠️ Desbalanceada'}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Concepto -->
+        <div class="bg-gray-50 p-4 rounded-lg">
+            <h4 class="text-md font-semibold text-gray-900 mb-2">Concepto</h4>
+            <p class="text-sm text-gray-700">${transaccion.concepto}</p>
+        </div>
+        
+        <!-- Movimientos -->
+        <div class="bg-white">
+            <h4 class="text-md font-semibold text-gray-900 mb-3">Movimientos Contables</h4>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Cuenta</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">C.Costo/Proyecto</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Concepto</th>
+                            <th class="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase">Debe</th>
+                            <th class="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase">Haber</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        ${transaccion.movimientos && transaccion.movimientos.length > 0 ? 
+                            transaccion.movimientos.map(mov => `
+                                <tr>
+                                    <td class="px-3 py-2">
+                                        <div class="font-medium text-gray-900">${mov.cuenta_codigo || 'N/A'}</div>
+                                        <div class="text-xs text-gray-500">${mov.cuenta_nombre || 'Sin nombre'}</div>
+                                    </td>
+                                    <td class="px-3 py-2 text-xs">
+                                        ${mov.centro_costo_codigo ? '<div class="text-indigo-600">CC: ' + mov.centro_costo_codigo + '</div>' : ''}
+                                        ${mov.proyecto_codigo ? '<div class="text-green-600">PR: ' + mov.proyecto_codigo + '</div>' : ''}
+                                        ${!mov.centro_costo_codigo && !mov.proyecto_codigo ? '<span class="text-gray-400">-</span>' : ''}
+                                    </td>
+                                    <td class="px-3 py-2 text-gray-700">${mov.concepto || transaccion.concepto}</td>
+                                    <td class="px-3 py-2 text-right ${parseFloat(mov.debe) > 0 ? 'text-green-600 font-medium' : 'text-gray-400'}">
+                                        ${parseFloat(mov.debe) > 0 ? '$' + parseFloat(mov.debe).toFixed(2) : '-'}
+                                    </td>
+                                    <td class="px-3 py-2 text-right ${parseFloat(mov.haber) > 0 ? 'text-red-600 font-medium' : 'text-gray-400'}">
+                                        ${parseFloat(mov.haber) > 0 ? '$' + parseFloat(mov.haber).toFixed(2) : '-'}
+                                    </td>
+                                </tr>
+                            `).join('') : 
+                            '<tr><td colspan="5" class="px-3 py-4 text-center text-gray-500">No hay movimientos registrados</td></tr>'
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+function cerrarModalTransaccion() {
+    document.getElementById('ver-transaccion-modal').classList.add('hidden');
+}
+
+function mostrarErrorEnModal(mensaje) {
+    const content = document.getElementById('modal-transaccion-content');
+    content.innerHTML = `
+        <div class="text-center py-8">
+            <i class="fas fa-exclamation-triangle text-2xl text-red-500 mb-2"></i>
+            <p class="text-red-600">${mensaje}</p>
+        </div>
+    `;
+}
+
+function getEstadoColor(estado) {
+    const colors = {
+        'BORRADOR': 'bg-gray-100 text-gray-800',
+        'VALIDADA': 'bg-yellow-100 text-yellow-800',
+        'CONTABILIZADA': 'bg-green-100 text-green-800',
+        'CANCELADA': 'bg-red-100 text-red-800'
+    };
+    return colors[estado] || 'bg-gray-100 text-gray-800';
+}
+
+function getTipoColor(tipo) {
+    const colors = {
+        'INGRESO': 'bg-green-100 text-green-800',
+        'EGRESO': 'bg-red-100 text-red-800',
+        'DIARIO': 'bg-blue-100 text-blue-800',
+        'AJUSTE': 'bg-purple-100 text-purple-800'
+    };
+    return colors[tipo] || 'bg-gray-100 text-gray-800';
+}
+
+// Función para cambiar estado de transacción
+async function cambiarEstadoTransaccion(transaccionId, nuevoEstado) {
+    try {
+        const response = await fetch(`/api/transacciones/transacciones/${transaccionId}/cambiar_estado/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                estado: nuevoEstado
+            })
+        });
+        
+        if (response.ok) {
+            // Recargar la página para mostrar cambios
+            location.reload();
+        } else {
+            const error = await response.json();
+            alert('Error: ' + (error.message || 'No se pudo cambiar el estado'));
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error de conexión');
+    }
+}
+
+// Función para obtener CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Agregar event listeners para los botones de acción
+document.addEventListener('DOMContentLoaded', function() {
+    // Agregar funcionalidad a los filtros
+    const filtros = document.querySelectorAll('select, input[type="date"]');
+    filtros.forEach(filtro => {
+        filtro.addEventListener('change', aplicarFiltros);
+    });
+});
+
+function aplicarFiltros() {
+    const estado = document.getElementById('filtro-estado').value;
+    const tipo = document.getElementById('filtro-tipo').value;
+    const fechaDesde = document.getElementById('filtro-fecha-desde').value;
+    const fechaHasta = document.getElementById('filtro-fecha-hasta').value;
+    
+    const filas = document.querySelectorAll('tbody tr');
+    let filasVisibles = 0;
+    
+    filas.forEach(fila => {
+        // Skip empty message row
+        if (fila.querySelector('td[colspan]')) {
+            fila.style.display = 'none';
+            return;
+        }
+        
+        let mostrar = true;
+        
+        // Filtro por estado
+        if (estado) {
+            const estadoTransaccion = fila.querySelector('td:nth-child(9) span')?.textContent.trim();
+            if (estadoTransaccion !== estado) {
+                mostrar = false;
+            }
+        }
+        
+        // Filtro por tipo
+        if (tipo) {
+            const tipoTransaccion = fila.querySelector('td:nth-child(5) span')?.textContent.trim();
+            if (tipoTransaccion !== tipo) {
+                mostrar = false;
+            }
+        }
+        
+        // Filtro por fecha
+        if (fechaDesde || fechaHasta) {
+            const fechaTexto = fila.querySelector('td:nth-child(2)')?.textContent.trim();
+            if (fechaTexto) {
+                // Convertir fecha de formato dd/mm/yyyy a yyyy-mm-dd para comparación
+                const fechaParts = fechaTexto.split('/');
+                if (fechaParts.length === 3) {
+                    const fechaTransaccion = `${fechaParts[2]}-${fechaParts[1].padStart(2, '0')}-${fechaParts[0].padStart(2, '0')}`;
+                    
+                    if (fechaDesde && fechaTransaccion < fechaDesde) {
+                        mostrar = false;
+                    }
+                    
+                    if (fechaHasta && fechaTransaccion > fechaHasta) {
+                        mostrar = false;
+                    }
+                }
+            }
+        }
+        
+        fila.style.display = mostrar ? '' : 'none';
+        if (mostrar) filasVisibles++;
+    });
+    
+    // Mostrar mensaje si no hay resultados
+    const tbody = document.querySelector('tbody');
+    const mensajeVacio = tbody.querySelector('tr td[colspan]');
+    
+    if (filasVisibles === 0) {
+        if (!mensajeVacio) {
+            const filaMensaje = document.createElement('tr');
+            filaMensaje.innerHTML = `
+                <td colspan="10" class="px-6 py-8 text-center text-sm text-gray-500">
+                    <i class="fas fa-search text-2xl text-gray-300 mb-2 block"></i>
+                    No se encontraron transacciones con los filtros aplicados
+                    <br>
+                    <button onclick="limpiarFiltros()" class="mt-2 text-indigo-600 hover:text-indigo-900 underline">
+                        Limpiar filtros
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(filaMensaje);
+        }
+    } else {
+        // Remover mensaje de vacío si existe
+        if (mensajeVacio && mensajeVacio.parentElement) {
+            mensajeVacio.parentElement.style.display = 'none';
+        }
+    }
+}
+
+function limpiarFiltros() {
+    // Limpiar todos los filtros
+    document.getElementById('filtro-estado').value = '';
+    document.getElementById('filtro-tipo').value = '';
+    document.getElementById('filtro-fecha-desde').value = '';
+    document.getElementById('filtro-fecha-hasta').value = '';
+    
+    // Mostrar todas las filas
+    const filas = document.querySelectorAll('tbody tr');
+    filas.forEach(fila => {
+        fila.style.display = '';
+    });
+    
+    // Remover mensaje de filtros vacíos si existe
+    const mensajesExtra = document.querySelectorAll('tbody tr:last-child td[colspan]');
+    mensajesExtra.forEach(mensaje => {
+        if (mensaje.textContent.includes('filtros aplicados')) {
+            mensaje.parentElement.remove();
+        }
+    });
+}
+</script>
+{% endblock %}
