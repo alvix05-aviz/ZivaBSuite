@@ -28,6 +28,7 @@ LOCAL_APPS = [
     'apps.transacciones',  # Renombrado de 'polizas'
     'apps.reportes',       # NUEVO
     'apps.centros_costo',
+    'apps.sat_integration',  # SAT CFDI Integration
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

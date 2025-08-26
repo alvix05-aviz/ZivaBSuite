@@ -42,3 +42,8 @@ structlog==23.2.0
 
 # Development tools
 ipython==8.17.2
+
+# SAT Integration
+satcfdi==4.7.5
+requests==2.31.0
+cryptography==41.0.7

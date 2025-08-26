@@ -215,6 +215,7 @@ urlpatterns = [
     path('api/transacciones/', include('apps.transacciones.urls')),
     path('api/reportes/', include('apps.reportes.urls')),
     path('api/centros-costo/', include('apps.centros_costo.urls')),
+    path('api/sat/', include('apps.sat_integration.urls')),
 ]
 
 # Servir archivos media en desarrollo

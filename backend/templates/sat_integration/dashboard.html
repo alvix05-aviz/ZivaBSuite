@@ -1,0 +1,385 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}SAT CFDI - Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .cfdi-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border-left: 4px solid #3498db;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 5px;
+    }
+    
+    .stat-label {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+    }
+    
+    .btn-sat {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        border: none;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-block;
+        transition: transform 0.2s;
+    }
+    
+    .btn-sat:hover {
+        transform: translateY(-2px);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .recent-downloads {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .download-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #ecf0f1;
+    }
+    
+    .download-item:last-child {
+        border-bottom: none;
+    }
+    
+    .status-badge {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    
+    .status-completado {
+        background: #d5f4e6;
+        color: #27ae60;
+    }
+    
+    .status-procesando {
+        background: #fff3cd;
+        color: #856404;
+    }
+    
+    .status-error {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .credentials-warning {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .warning-icon {
+        color: #f39c12;
+        font-size: 1.2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="cfdi-card">
+        <h1><i class="fas fa-file-invoice"></i> SAT CFDI - Dashboard</h1>
+        <p>Gestiona y descarga tus Comprobantes Fiscales Digitales (CFDI) del SAT</p>
+        
+        <div class="action-buttons">
+            <a href="#" class="btn-sat" onclick="iniciarDescarga()">
+                <i class="fas fa-download"></i> Nueva Descarga Masiva
+            </a>
+            <a href="#" class="btn-sat" onclick="gestionarCredenciales()">
+                <i class="fas fa-key"></i> Credenciales SAT
+            </a>
+            <a href="#" class="btn-sat" onclick="consultarCFDI()">
+                <i class="fas fa-search"></i> Consultar CFDIs
+            </a>
+        </div>
+    </div>
+    
+    <!-- Advertencia si no hay credenciales -->
+    <div class="credentials-warning" id="credentialsWarning" style="display: none;">
+        <i class="fas fa-exclamation-triangle warning-icon"></i>
+        <div>
+            <strong>Credenciales SAT requeridas</strong><br>
+            Para utilizar las funciones de descarga masiva, necesitas configurar tus credenciales de la FIEL del SAT.
+        </div>
+    </div>
+    
+    <!-- Estadísticas -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number" id="totalCFDI">-</div>
+            <div class="stat-label">Total CFDIs</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="cfdiVigentes">-</div>
+            <div class="stat-label">CFDIs Vigentes</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="cfdiCancelados">-</div>
+            <div class="stat-label">CFDIs Cancelados</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="trabajosActivos">-</div>
+            <div class="stat-label">Descargas Activas</div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="recent-downloads">
+                <h3><i class="fas fa-clock"></i> Descargas Recientes</h3>
+                <div id="recentDownloads">
+                    <div class="text-center p-4">
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only">Cargando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="recent-downloads">
+                <h3><i class="fas fa-info-circle"></i> Estado del Sistema</h3>
+                <div class="download-item">
+                    <span>Credenciales SAT</span>
+                    <span class="status-badge" id="credentialsStatus">Verificando...</span>
+                </div>
+                <div class="download-item">
+                    <span>Conexión SAT</span>
+                    <span class="status-badge status-completado">Activa</span>
+                </div>
+                <div class="download-item">
+                    <span>Cola de Tareas</span>
+                    <span class="status-badge status-completado">Operativa</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Variables globales
+let dashboardData = {
+    credentials: null,
+    stats: {},
+    recentJobs: []
+};
+
+// Cargar datos del dashboard
+async function loadDashboard() {
+    try {
+        // Cargar estadísticas
+        await loadStats();
+        
+        // Cargar credenciales
+        await loadCredentials();
+        
+        // Cargar trabajos recientes
+        await loadRecentJobs();
+        
+    } catch (error) {
+        console.error('Error cargando dashboard:', error);
+        showAlert('Error cargando los datos del dashboard', 'danger');
+    }
+}
+
+// Cargar estadísticas
+async function loadStats() {
+    try {
+        const response = await fetch('/api/sat/api/download-jobs/stats/');
+        const stats = await response.json();
+        
+        document.getElementById('trabajosActivos').textContent = 
+            stats.pendientes + stats.procesando;
+        
+        // Cargar estadísticas de CFDI
+        const cfdiResponse = await fetch('/api/sat/api/cfdi/summary/');
+        const cfdiStats = await cfdiResponse.json();
+        
+        document.getElementById('totalCFDI').textContent = cfdiStats.total_cfdi || 0;
+        document.getElementById('cfdiVigentes').textContent = 
+            cfdiStats.estados?.VIGENTE?.count || 0;
+        document.getElementById('cfdiCancelados').textContent = 
+            cfdiStats.estados?.CANCELADO?.count || 0;
+            
+        dashboardData.stats = { ...stats, ...cfdiStats };
+        
+    } catch (error) {
+        console.error('Error cargando estadísticas:', error);
+    }
+}
+
+// Cargar credenciales
+async function loadCredentials() {
+    try {
+        const response = await fetch('/api/sat/api/credentials/');
+        const data = await response.json();
+        
+        const credentialsStatus = document.getElementById('credentialsStatus');
+        const credentialsWarning = document.getElementById('credentialsWarning');
+        
+        if (data.results && data.results.length > 0) {
+            const credentials = data.results[0];
+            dashboardData.credentials = credentials;
+            
+            if (credentials.validadas) {
+                credentialsStatus.textContent = 'Válidas';
+                credentialsStatus.className = 'status-badge status-completado';
+                credentialsWarning.style.display = 'none';
+            } else {
+                credentialsStatus.textContent = 'Pendientes';
+                credentialsStatus.className = 'status-badge status-procesando';
+                credentialsWarning.style.display = 'flex';
+            }
+        } else {
+            credentialsStatus.textContent = 'No configuradas';
+            credentialsStatus.className = 'status-badge status-error';
+            credentialsWarning.style.display = 'flex';
+        }
+        
+    } catch (error) {
+        console.error('Error cargando credenciales:', error);
+        document.getElementById('credentialsStatus').textContent = 'Error';
+        document.getElementById('credentialsStatus').className = 'status-badge status-error';
+    }
+}
+
+// Cargar trabajos recientes
+async function loadRecentJobs() {
+    try {
+        const response = await fetch('/api/sat/api/download-jobs/?ordering=-fecha_creacion&limit=5');
+        const data = await response.json();
+        
+        const container = document.getElementById('recentDownloads');
+        
+        if (data.results && data.results.length > 0) {
+            container.innerHTML = data.results.map(job => `
+                <div class="download-item">
+                    <div>
+                        <strong>${job.tipo_cfdi}</strong><br>
+                        <small>${job.fecha_inicio} - ${job.fecha_fin}</small>
+                    </div>
+                    <span class="status-badge status-${job.estado.toLowerCase()}">${job.estado}</span>
+                </div>
+            `).join('');
+        } else {
+            container.innerHTML = `
+                <div class="text-center p-4 text-muted">
+                    <i class="fas fa-inbox fa-3x mb-3"></i><br>
+                    No hay descargas registradas
+                </div>
+            `;
+        }
+        
+        dashboardData.recentJobs = data.results || [];
+        
+    } catch (error) {
+        console.error('Error cargando trabajos:', error);
+        document.getElementById('recentDownloads').innerHTML = `
+            <div class="text-center p-4 text-danger">
+                <i class="fas fa-exclamation-triangle"></i>
+                Error cargando las descargas
+            </div>
+        `;
+    }
+}
+
+// Funciones de acción
+function iniciarDescarga() {
+    if (!dashboardData.credentials || !dashboardData.credentials.validadas) {
+        showAlert('Primero debes configurar y validar tus credenciales SAT', 'warning');
+        return;
+    }
+    
+    // Abrir modal o página de nueva descarga
+    showAlert('Funcionalidad de descarga en desarrollo', 'info');
+}
+
+function gestionarCredenciales() {
+    // Abrir modal o página de credenciales
+    showAlert('Funcionalidad de credenciales en desarrollo', 'info');
+}
+
+function consultarCFDI() {
+    // Abrir página de consulta de CFDI
+    showAlert('Funcionalidad de consulta en desarrollo', 'info');
+}
+
+// Función para mostrar alertas
+function showAlert(message, type = 'info') {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="close" data-dismiss="alert">
+            <span>&times;</span>
+        </button>
+    `;
+    
+    document.querySelector('.container-fluid').insertBefore(alertDiv, document.querySelector('.cfdi-card'));
+    
+    // Auto dismiss after 5 seconds
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 5000);
+}
+
+// Inicializar cuando la página cargue
+document.addEventListener('DOMContentLoaded', function() {
+    loadDashboard();
+    
+    // Actualizar cada 30 segundos
+    setInterval(loadDashboard, 30000);
+});
+</script>
+{% endblock %}
