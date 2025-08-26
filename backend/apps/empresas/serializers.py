@@ -15,7 +15,7 @@ class EmpresaSerializer(serializers.ModelSerializer):
             'id', 'nombre', 'nombre_comercial', 'rfc', 
             'limite_usuarios', 'usuarios_count'
         ]
-        read_only_fields = ['creado_por', 'modificado_por']
+        read_only_fields = ['creado_por', 'modificado_por', 'fecha_creacion', 'fecha_modificacion']
         
     def get_usuarios_count(self, obj):
         return obj.usuarios_asignados.filter(activo=True).count()

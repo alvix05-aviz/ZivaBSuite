@@ -221,10 +221,11 @@ CACHES = {
     }
 }
 
-# Session configuration
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-SESSION_CACHE_ALIAS = 'default'
+# Session configuration - Temporalmente en DB para debug
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+# SESSION_CACHE_ALIAS = 'default'  # Comentado temporalmente
 SESSION_COOKIE_AGE = 1800  # 30 minutos
+SESSION_SAVE_EVERY_REQUEST = True  # Forzar guardado en cada request
 
 # Security settings (se configuran específicamente en cada entorno)
 SECURE_BROWSER_XSS_FILTER = True

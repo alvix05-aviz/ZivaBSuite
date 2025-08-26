@@ -28,6 +28,28 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             id__in=user_empresas,
             activo=True
         )
+    
+    def perform_create(self, serializer):
+        """Al crear empresa, asignar usuario como creador y propietario"""
+        # Crear la empresa
+        empresa = serializer.save(
+            creado_por=self.request.user,
+            modificado_por=self.request.user
+        )
+        
+        # Crear relación usuario-empresa como PROPIETARIO
+        UsuarioEmpresa.objects.create(
+            usuario=self.request.user,
+            empresa=empresa,
+            rol='PROPIETARIO',
+            empresa_default=True,  # Primera empresa será default
+            creado_por=self.request.user,
+            modificado_por=self.request.user
+        )
+    
+    def perform_update(self, serializer):
+        """Al actualizar, registrar usuario modificador"""
+        serializer.save(modificado_por=self.request.user)
 
 
 class UsuarioEmpresaViewSet(viewsets.ModelViewSet):
@@ -124,6 +146,9 @@ class MultiEmpresaViewSet(viewsets.ViewSet):
             )
         
         try:
+            # Convertir a entero
+            empresa_id = int(empresa_id)
+            
             acceso = UsuarioEmpresa.objects.select_related('empresa').get(
                 usuario=request.user,
                 empresa_id=empresa_id,
@@ -132,6 +157,7 @@ class MultiEmpresaViewSet(viewsets.ViewSet):
             
             # Cambiar empresa en la sesión
             request.session['empresa_id'] = empresa_id
+            request.session.modified = True  # Forzar guardado de sesión
             
             # Actualizar último acceso
             acceso.ultimo_acceso = timezone.now()

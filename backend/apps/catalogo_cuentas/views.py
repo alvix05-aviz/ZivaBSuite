@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from django.http import HttpResponse
+from django.db import transaction
 from .models import CuentaContable
 from .serializers import CuentaContableSerializer, CuentaContableTreeSerializer
 from io import BytesIO
@@ -436,3 +437,174 @@ def catalogo_root(request):
         'auth_required': True,
         'token': 'Authorization: Token 1e0b0f1c08f1359f4c76e55c2fcba894976aeba7'
     })
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def aplicar_plantilla_predefinida(request):
+    """Aplicar catálogo predefinido según tipo de empresa"""
+    tipo_plantilla = request.data.get('tipo')
+    
+    # Mapeo de plantillas
+    PLANTILLAS = {
+        'servicios': {
+            'nombre': 'Empresa de Servicios',
+            'cuentas': [
+                ('1010', 'Caja', 'ACTIVO', 'DEUDORA', 'Efectivo y equivalentes'),
+                ('1020', 'Bancos', 'ACTIVO', 'DEUDORA', 'Efectivo y equivalentes'),
+                ('1030', 'Inversiones temporales', 'ACTIVO', 'DEUDORA', 'Inversión'),
+                ('1040', 'Cuentas por cobrar clientes', 'ACTIVO', 'DEUDORA', 'Operación'),
+                ('1050', 'Anticipos a proveedores', 'ACTIVO', 'DEUDORA', 'Operación'),
+                ('1060', 'Gastos pagados por anticipado', 'ACTIVO', 'DEUDORA', 'Operación'),
+                ('1070', 'Propiedad, planta y equipo', 'ACTIVO', 'DEUDORA', 'Inversión'),
+                ('1080', 'Activos intangibles', 'ACTIVO', 'DEUDORA', 'Inversión'),
+                ('2010', 'Proveedores', 'PASIVO', 'ACREEDORA', 'Operación'),
+                ('2020', 'Acreedores diversos', 'PASIVO', 'ACREEDORA', 'Operación/Financiación'),
+                ('2030', 'Impuestos por pagar', 'PASIVO', 'ACREEDORA', 'Operación'),
+                ('2040', 'Préstamos bancarios corto plazo', 'PASIVO', 'ACREEDORA', 'Financiación'),
+                ('2050', 'Cuentas por pagar empleados', 'PASIVO', 'ACREEDORA', 'Operación'),
+                ('2060', 'Provisiones', 'PASIVO', 'ACREEDORA', 'Operación'),
+                ('3010', 'Capital social', 'CAPITAL', 'ACREEDORA', 'Financiación'),
+                ('3020', 'Reservas legales', 'CAPITAL', 'ACREEDORA', 'Financiación'),
+                ('3030', 'Resultados acumulados', 'CAPITAL', 'ACREEDORA', 'Financiación'),
+                ('3040', 'Resultado del ejercicio', 'CAPITAL', 'ACREEDORA', 'Operación'),
+                ('4010', 'Ingresos por servicios', 'INGRESO', 'ACREEDORA', 'Operación'),
+                ('4020', 'Ingresos por mantenimiento', 'INGRESO', 'ACREEDORA', 'Operación'),
+                ('5010', 'Costo de servicios prestados', 'GASTO', 'DEUDORA', 'Operación'),
+                ('5020', 'Gastos de personal', 'GASTO', 'DEUDORA', 'Operación'),
+                ('5030', 'Gastos de oficina', 'GASTO', 'DEUDORA', 'Operación'),
+                ('5040', 'Gastos de tecnología', 'GASTO', 'DEUDORA', 'Operación'),
+                ('5050', 'Gastos de ventas', 'GASTO', 'DEUDORA', 'Operación'),
+                ('5060', 'Gastos administrativos', 'GASTO', 'DEUDORA', 'Operación'),
+                ('5070', 'Gastos financieros', 'GASTO', 'DEUDORA', 'Operación/Financiación'),
+                ('5080', 'Depreciación y amortización', 'GASTO', 'DEUDORA', 'Operación (Ajuste no efectivo)'),
+            ]
+        },
+        'comercial': {
+            'nombre': 'Empresa Comercializadora',
+            'cuentas': [
+                ('1010', 'Caja y bancos', 'ACTIVO', 'DEUDORA', 'Efectivo y equivalentes'),
+                ('1020', 'Inventarios de mercancías', 'ACTIVO', 'DEUDORA', 'Operación'),
+                ('1030', 'Cuentas por cobrar clientes', 'ACTIVO', 'DEUDORA', 'Operación'),
+                ('1040', 'Deudores diversos', 'ACTIVO', 'DEUDORA', 'Operación'),
+                ('1050', 'Almacenes y equipos', 'ACTIVO', 'DEUDORA', 'Inversión'),
+                ('1060', 'Vehículos de reparto', 'ACTIVO', 'DEUDORA', 'Inversión'),
+                ('1070', 'Mobiliario y equipo oficina', 'ACTIVO', 'DEUDORA', 'Inversión'),
+                ('2010', 'Proveedores', 'PASIVO', 'ACREEDORA', 'Operación'),
+                ('2020', 'Documentos por pagar', 'PASIVO', 'ACREEDORA', 'Financiación'),
+                ('2030', 'Acreedores diversos', 'PASIVO', 'ACREEDORA', 'Operación/Financiación'),
+                ('2040', 'Impuestos por pagar', 'PASIVO', 'ACREEDORA', 'Operación'),
+                ('2050', 'Préstamos bancarios', 'PASIVO', 'ACREEDORA', 'Financiación'),
+                ('3010', 'Capital social', 'CAPITAL', 'ACREEDORA', 'Financiación'),
+                ('3020', 'Utilidades retenidas', 'CAPITAL', 'ACREEDORA', 'Financiación'),
+                ('3030', 'Resultado del ejercicio', 'CAPITAL', 'ACREEDORA', 'Operación'),
+                ('4010', 'Ventas de mercancías', 'INGRESO', 'ACREEDORA', 'Operación'),
+                ('4020', 'Devoluciones en ventas', 'INGRESO', 'DEUDORA', 'Operación'),
+                ('4030', 'Descuentos comerciales', 'INGRESO', 'DEUDORA', 'Operación'),
+                ('4040', 'Ingresos financieros', 'INGRESO', 'ACREEDORA', 'Operación'),
+                ('5010', 'Costo de ventas', 'COSTO', 'DEUDORA', 'Operación'),
+                ('5020', 'Gastos de venta', 'GASTO', 'DEUDORA', 'Operación'),
+                ('5030', 'Gastos de administración', 'GASTO', 'DEUDORA', 'Operación'),
+                ('5040', 'Gastos de distribución', 'GASTO', 'DEUDORA', 'Operación'),
+                ('5050', 'Gastos financieros', 'GASTO', 'DEUDORA', 'Operación/Financiación'),
+                ('5060', 'Depreciación', 'GASTO', 'DEUDORA', 'Operación (Ajuste no efectivo)'),
+            ]
+        },
+        'industrial': {
+            'nombre': 'Empresa de Manufactura',
+            'cuentas': [
+                ('1010', 'Efectivo y equivalentes', 'ACTIVO', 'DEUDORA', 'Efectivo y equivalentes'),
+                ('1021', 'Inventario - Materias primas', 'ACTIVO', 'DEUDORA', 'Operación'),
+                ('1022', 'Inventario - Productos en proceso', 'ACTIVO', 'DEUDORA', 'Operación'),
+                ('1023', 'Inventario - Productos terminados', 'ACTIVO', 'DEUDORA', 'Operación'),
+                ('1030', 'Cuentas por cobrar', 'ACTIVO', 'DEUDORA', 'Operación'),
+                ('1041', 'Maquinaria', 'ACTIVO', 'DEUDORA', 'Inversión'),
+                ('1042', 'Edificios', 'ACTIVO', 'DEUDORA', 'Inversión'),
+                ('1043', 'Equipos de producción', 'ACTIVO', 'DEUDORA', 'Inversión'),
+                ('2010', 'Proveedores materias primas', 'PASIVO', 'ACREEDORA', 'Operación'),
+                ('2020', 'Acreedores varios', 'PASIVO', 'ACREEDORA', 'Operación/Financiación'),
+                ('2030', 'Impuestos por pagar', 'PASIVO', 'ACREEDORA', 'Operación'),
+                ('2040', 'Préstamos a corto plazo', 'PASIVO', 'ACREEDORA', 'Financiación'),
+                ('2050', 'Obligaciones laborales', 'PASIVO', 'ACREEDORA', 'Operación'),
+                ('3010', 'Capital social', 'CAPITAL', 'ACREEDORA', 'Financiación'),
+                ('3020', 'Superávit de capital', 'CAPITAL', 'ACREEDORA', 'Financiación'),
+                ('3030', 'Utilidades acumuladas', 'CAPITAL', 'ACREEDORA', 'Financiación'),
+                ('3040', 'Resultado del período', 'CAPITAL', 'ACREEDORA', 'Operación'),
+                ('4010', 'Ventas de productos', 'INGRESO', 'ACREEDORA', 'Operación'),
+                ('4020', 'Devoluciones en ventas', 'INGRESO', 'DEUDORA', 'Operación'),
+                ('4030', 'Descuentos concedidos', 'INGRESO', 'DEUDORA', 'Operación'),
+                ('4040', 'Otros ingresos operativos', 'INGRESO', 'ACREEDORA', 'Operación'),
+                ('5011', 'Costo - Materia prima directa', 'COSTO', 'DEUDORA', 'Operación'),
+                ('5012', 'Costo - Mano de obra directa', 'COSTO', 'DEUDORA', 'Operación'),
+                ('5013', 'Costos indirectos de fabricación', 'COSTO', 'DEUDORA', 'Operación'),
+                ('5020', 'Gastos de operación', 'GASTO', 'DEUDORA', 'Operación'),
+                ('5030', 'Gastos de venta', 'GASTO', 'DEUDORA', 'Operación'),
+                ('5040', 'Gastos administrativos', 'GASTO', 'DEUDORA', 'Operación'),
+                ('5050', 'Gastos financieros', 'GASTO', 'DEUDORA', 'Operación/Financiación'),
+                ('5060', 'Depreciación y amortización', 'GASTO', 'DEUDORA', 'Operación (Ajuste no efectivo)'),
+            ]
+        }
+    }
+    
+    if tipo_plantilla not in PLANTILLAS:
+        return Response({'error': 'Tipo de plantilla no válido'}, status=400)
+    
+    # Obtener empresa actual
+    empresa = None
+    if hasattr(request, 'empresa') and request.empresa:
+        empresa = request.empresa
+    else:
+        empresa_id = request.session.get('empresa_id')
+        if empresa_id:
+            from apps.empresas.models import Empresa
+            try:
+                empresa = Empresa.objects.get(id=empresa_id)
+            except Empresa.DoesNotExist:
+                pass
+        
+        if not empresa:
+            from apps.empresas.models import UsuarioEmpresa
+            acceso = UsuarioEmpresa.objects.filter(
+                usuario=request.user,
+                activo=True
+            ).first()
+            if acceso:
+                empresa = acceso.empresa
+    
+    if not empresa:
+        return Response({'error': 'Sin empresa seleccionada'}, status=400)
+    
+    plantilla = PLANTILLAS[tipo_plantilla]
+    
+    try:
+        with transaction.atomic():
+            # Eliminar todas las cuentas existentes
+            CuentaContable.objects.filter(empresa=empresa).delete()
+            
+            # Crear las cuentas de la plantilla
+            cuentas_creadas = []
+            for codigo, nombre, tipo, naturaleza, categoria in plantilla['cuentas']:
+                # Determinar nivel por el código
+                nivel = len(codigo.replace('.', ''))
+                
+                cuenta = CuentaContable.objects.create(
+                    empresa=empresa,
+                    codigo=codigo,
+                    nombre=nombre,
+                    tipo=tipo,
+                    naturaleza=naturaleza,
+                    nivel=nivel,
+                    afectable=True,  # Todas las cuentas afectables por defecto
+                    creado_por=request.user,
+                    modificado_por=request.user
+                )
+                cuentas_creadas.append(cuenta)
+            
+            return Response({
+                'mensaje': f'Plantilla {plantilla["nombre"]} aplicada exitosamente',
+                'cuentas_creadas': len(cuentas_creadas),
+                'tipo': tipo_plantilla
+            })
+            
+    except Exception as e:
+        return Response({'error': f'Error al aplicar plantilla: {str(e)}'}, status=500)

@@ -412,8 +412,53 @@ function editarTipo(tipo) {
 }
 
 function aplicarPlantilla(tipo) {
-    if (confirm(`¿Está seguro de que desea aplicar la plantilla ${tipo}? Esta acción eliminará todas las cuentas existentes.`)) {
-        alert(`Aplicando plantilla ${tipo} - En desarrollo`);
+    const nombres = {
+        'servicios': 'Empresa de Servicios',
+        'comercial': 'Empresa Comercializadora', 
+        'industrial': 'Empresa de Manufactura'
+    };
+    
+    const nombre = nombres[tipo] || tipo;
+    
+    if (confirm(`¿Está seguro de que desea aplicar la plantilla "${nombre}"?\n\n⚠️ ADVERTENCIA: Esta acción eliminará todas las cuentas existentes y las reemplazará con el catálogo predefinido.\n\nEsta acción NO SE PUEDE DESHACER.`)) {
+        // Mostrar loading
+        const boton = event.target;
+        const textoOriginal = boton.innerHTML;
+        boton.disabled = true;
+        boton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Aplicando...';
+        
+        fetch('/api/catalogo/aplicar-plantilla/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                tipo: tipo
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            
+            alert(`✅ ${data.mensaje}\n\nCuentas creadas: ${data.cuentas_creadas}`);
+            
+            // Opcional: recargar la página para mostrar las nuevas cuentas
+            if (confirm('¿Desea ir al catálogo de cuentas para ver las cuentas creadas?')) {
+                window.location.href = '/catalogo/';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert(`❌ Error al aplicar plantilla: ${error.message}`);
+        })
+        .finally(() => {
+            // Restaurar botón
+            boton.disabled = false;
+            boton.innerHTML = textoOriginal;
+        });
     }
 }
 
@@ -432,6 +477,21 @@ function importarCatalogo() {
 
 function descargarPlantilla() {
     alert('Descargando plantilla - En desarrollo');
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }
 </script>
 {% endblock %}

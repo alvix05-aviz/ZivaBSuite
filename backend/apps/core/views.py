@@ -146,9 +146,21 @@ def seleccionar_empresa(request):
     """Seleccionar empresa activa"""
     if request.method == 'POST':
         empresa_id = request.POST.get('empresa_id')
+        
         if empresa_id:
-            request.session['empresa_id'] = empresa_id
-            return redirect('dashboard')
+            # Verificar que el usuario tenga acceso
+            try:
+                acceso = UsuarioEmpresa.objects.get(
+                    usuario=request.user,
+                    empresa_id=empresa_id,
+                    activo=True
+                )
+                # Guardar en sesión
+                request.session['empresa_id'] = int(empresa_id)
+                request.session.modified = True  # Forzar guardado de sesión
+                return redirect('dashboard')
+            except UsuarioEmpresa.DoesNotExist:
+                pass  # Usuario no tiene acceso
     
     # Obtener empresas del usuario
     accesos = UsuarioEmpresa.objects.filter(
@@ -156,8 +168,11 @@ def seleccionar_empresa(request):
         activo=True
     ).select_related('empresa')
     
+    current_empresa_id = request.session.get('empresa_id')
+    
     context = {
         'accesos': accesos,
+        'current_empresa_id': current_empresa_id,
     }
     
     return render(request, 'dashboard/seleccionar_empresa.html', context)
@@ -312,7 +327,9 @@ def configuracion_empresas_view(request):
 @login_required
 def configuracion_catalogo_view(request):
     """Vista de configuración del catálogo"""
-    empresa = get_empresa_actual(request)
+    # Usar el middleware en lugar de la función local
+    empresa = request.empresa
+    
     if not empresa:
         return redirect('seleccionar_empresa')
     

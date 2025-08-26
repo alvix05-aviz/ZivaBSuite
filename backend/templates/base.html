@@ -64,8 +64,13 @@
                 <div class="hidden sm:ml-6 sm:flex sm:items-center">
                     <!-- Empresa selector -->
                     <div class="mr-4">
-                        <select class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                            <option>Empresa Demo 1</option>
+                        <select class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm"
+                                onchange="cambiarEmpresaSeleccionada(this.value)">
+                            {% if request.empresa %}
+                                <option value="{{ request.empresa.id }}">{{ request.empresa.nombre }}</option>
+                            {% else %}
+                                <option value="">Seleccionar empresa...</option>
+                            {% endif %}
                         </select>
                     </div>
                     
@@ -143,5 +148,13 @@
     </footer>
     
     {% block extra_js %}{% endblock %}
+    
+    <script>
+    function cambiarEmpresaSeleccionada(empresaId) {
+        if (empresaId) {
+            window.location.href = '/seleccionar-empresa/';
+        }
+    }
+    </script>
 </body>
 </html>

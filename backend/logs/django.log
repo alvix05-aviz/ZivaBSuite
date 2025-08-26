@@ -4897,3 +4897,324 @@ INFO 2025-08-26 12:49:04,897 basehttp 158 131412716943040 "POST /login/ HTTP/1.1
 INFO 2025-08-26 12:49:04,943 basehttp 158 131412716943040 "GET /configuracion/empresas/ HTTP/1.1" 200 34341
 INFO 2025-08-26 12:49:07,223 basehttp 158 131412716943040 "GET /api/empresas/usuario-empresas/?empresa=1 HTTP/1.1" 200 460
 INFO 2025-08-26 12:50:04,206 basehttp 158 131412716943040 "GET /api/empresas/usuario-empresas/?empresa=1 HTTP/1.1" 200 460
+WARNING 2025-08-26 12:51:53,400 log 158 131412698060480 Forbidden: /api/empresas/usuario-empresas/
+WARNING 2025-08-26 12:51:53,401 basehttp 158 131412698060480 "GET /api/empresas/usuario-empresas/?empresa=1 HTTP/1.1" 403 65
+WARNING 2025-08-26 12:52:36,745 log 158 131412716943040 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-08-26 12:52:36,746 basehttp 158 131412716943040 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5669
+INFO 2025-08-26 12:52:41,559 basehttp 158 131412716943040 "GET /api/empresas/usuario-empresas/?empresa=1 HTTP/1.1" 200 460
+INFO 2025-08-26 12:53:47,801 basehttp 158 131412716943040 "GET /configuracion/empresas/ HTTP/1.1" 200 34596
+WARNING 2025-08-26 12:53:47,842 log 158 131412716943040 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-08-26 12:53:47,842 basehttp 158 131412716943040 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5669
+INFO 2025-08-26 12:53:50,950 basehttp 158 131412716943040 "GET /api/empresas/usuario-empresas/?empresa=1 HTTP/1.1" 200 460
+INFO 2025-08-26 12:53:50,973 basehttp 158 131412716943040 "GET /api/empresas/empresas/1/ HTTP/1.1" 200 116
+INFO 2025-08-26 13:06:10,163 basehttp 158 131412716943040 "GET /configuracion/ HTTP/1.1" 200 24938
+INFO 2025-08-26 13:06:14,066 basehttp 158 131412716943040 "GET /configuracion/transacciones/ HTTP/1.1" 200 66710
+INFO 2025-08-26 13:06:20,701 basehttp 158 131412716943040 "GET /configuracion/ HTTP/1.1" 200 24938
+INFO 2025-08-26 13:06:21,634 basehttp 158 131412716943040 "GET /configuracion/catalogo/ HTTP/1.1" 200 33857
+INFO 2025-08-26 13:11:24,102 autoreload 158 131413232577408 /app/apps/catalogo_cuentas/views.py changed, reloading.
+INFO 2025-08-26 13:11:25,413 autoreload 173 132576333699968 Watching for file changes with StatReloader
+INFO 2025-08-26 13:16:01,250 basehttp 173 132575819462336 "GET /configuracion/catalogo/ HTTP/1.1" 302 0
+INFO 2025-08-26 13:16:01,262 basehttp 173 132575819462336 "GET /login/?next=/configuracion/catalogo/ HTTP/1.1" 200 4529
+INFO 2025-08-26 13:16:08,176 basehttp 173 132575819462336 "POST /login/ HTTP/1.1" 302 0
+INFO 2025-08-26 13:16:08,218 basehttp 173 132575819462336 "GET /configuracion/catalogo/ HTTP/1.1" 200 33857
+INFO 2025-08-26 13:16:18,591 autoreload 173 132576333699968 /app/apps/catalogo_cuentas/urls.py changed, reloading.
+INFO 2025-08-26 13:16:19,915 autoreload 184 134191532063616 Watching for file changes with StatReloader
+INFO 2025-08-26 13:16:36,067 autoreload 184 134191532063616 /app/apps/catalogo_cuentas/urls.py changed, reloading.
+INFO 2025-08-26 13:16:37,494 autoreload 193 128902374267776 Watching for file changes with StatReloader
+INFO 2025-08-26 13:18:42,472 basehttp 193 128901859768000 "GET /configuracion/catalogo/ HTTP/1.1" 302 0
+INFO 2025-08-26 13:18:42,483 basehttp 193 128901859768000 "GET /login/?next=/configuracion/catalogo/ HTTP/1.1" 200 4529
+INFO 2025-08-26 13:18:49,478 basehttp 193 128901859768000 "POST /login/ HTTP/1.1" 302 0
+INFO 2025-08-26 13:18:49,571 basehttp 193 128901859768000 "GET /configuracion/catalogo/ HTTP/1.1" 200 35993
+ERROR 2025-08-26 13:18:54,940 log 193 128901859768000 Internal Server Error: /api/catalogo/aplicar-plantilla/
+ERROR 2025-08-26 13:18:54,941 basehttp 193 128901859768000 "POST /api/catalogo/aplicar-plantilla/ HTTP/1.1" 500 73
+INFO 2025-08-26 13:21:08,866 autoreload 193 128902374267776 /app/apps/catalogo_cuentas/views.py changed, reloading.
+INFO 2025-08-26 13:21:10,439 autoreload 204 133760446241664 Watching for file changes with StatReloader
+INFO 2025-08-26 13:21:27,995 basehttp 204 133759931250368 "GET /configuracion/catalogo/ HTTP/1.1" 302 0
+INFO 2025-08-26 13:21:28,007 basehttp 204 133759931250368 "GET /login/?next=/configuracion/catalogo/ HTTP/1.1" 200 4529
+INFO 2025-08-26 13:21:40,364 basehttp 204 133759931250368 "POST /login/ HTTP/1.1" 302 0
+INFO 2025-08-26 13:21:40,409 basehttp 204 133759931250368 "GET /configuracion/catalogo/ HTTP/1.1" 200 35993
+ERROR 2025-08-26 13:21:47,011 log 204 133759931250368 Internal Server Error: /api/catalogo/aplicar-plantilla/
+ERROR 2025-08-26 13:21:47,012 basehttp 204 133759931250368 "POST /api/catalogo/aplicar-plantilla/ HTTP/1.1" 500 478
+INFO 2025-08-26 13:21:58,145 basehttp 204 133759931250368 "GET /configuracion/ HTTP/1.1" 200 24938
+INFO 2025-08-26 13:22:01,914 basehttp 204 133759931250368 "GET /configuracion/empresas/ HTTP/1.1" 200 34596
+ERROR 2025-08-26 13:22:43,346 log 204 133759931250368 Internal Server Error: /api/empresas/empresas/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/django/db/backends/utils.py", line 89, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.NotNullViolation: null value in column "creado_por_id" of relation "empresas_empresa" violates not-null constraint
+DETAIL:  Failing row contains (4, 2025-08-26 19:22:43.295741+00, 2025-08-26 19:22:43.295755+00, t, 1, Nueva empresa, LEN240801LF0, null, null, 5, ).
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/views/decorators/csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/rest_framework/viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/usr/local/lib/python3.11/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/usr/local/lib/python3.11/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/rest_framework/mixins.py", line 19, in create
+    self.perform_create(serializer)
+  File "/usr/local/lib/python3.11/site-packages/rest_framework/mixins.py", line 24, in perform_create
+    serializer.save()
+  File "/usr/local/lib/python3.11/site-packages/rest_framework/serializers.py", line 212, in save
+    self.instance = self.create(validated_data)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/rest_framework/serializers.py", line 962, in create
+    instance = ModelClass._default_manager.create(**validated_data)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/db/models/query.py", line 658, in create
+    obj.save(force_insert=True, using=self.db)
+  File "/app/apps/core/models.py", line 52, in save
+    super().save(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/django/db/models/base.py", line 814, in save
+    self.save_base(
+  File "/usr/local/lib/python3.11/site-packages/django/db/models/base.py", line 877, in save_base
+    updated = self._save_table(
+              ^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/db/models/base.py", line 1020, in _save_table
+    results = self._do_insert(
+              ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/db/models/base.py", line 1061, in _do_insert
+    return manager._insert(
+           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/db/models/query.py", line 1805, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/db/models/sql/compiler.py", line 1822, in execute_sql
+    cursor.execute(sql, params)
+  File "/usr/local/lib/python3.11/site-packages/django/db/backends/utils.py", line 102, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/db/backends/utils.py", line 67, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/db/backends/utils.py", line 80, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/db/backends/utils.py", line 84, in _execute
+    with self.db.wrap_database_errors:
+  File "/usr/local/lib/python3.11/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/usr/local/lib/python3.11/site-packages/django/db/backends/utils.py", line 89, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.IntegrityError: null value in column "creado_por_id" of relation "empresas_empresa" violates not-null constraint
+DETAIL:  Failing row contains (4, 2025-08-26 19:22:43.295741+00, 2025-08-26 19:22:43.295755+00, t, 1, Nueva empresa, LEN240801LF0, null, null, 5, ).
+
+ERROR 2025-08-26 13:22:43,357 basehttp 204 133759931250368 "POST /api/empresas/empresas/ HTTP/1.1" 500 205672
+INFO 2025-08-26 13:24:35,414 autoreload 204 133760446241664 /app/apps/empresas/views.py changed, reloading.
+INFO 2025-08-26 13:24:36,576 autoreload 215 126567751441280 Watching for file changes with StatReloader
+INFO 2025-08-26 13:25:24,099 autoreload 215 126567751441280 /app/apps/empresas/serializers.py changed, reloading.
+INFO 2025-08-26 13:25:25,190 autoreload 224 126784783170432 Watching for file changes with StatReloader
+INFO 2025-08-26 13:25:51,448 basehttp 224 126784268924608 "GET /configuracion/empresas/ HTTP/1.1" 302 0
+INFO 2025-08-26 13:25:51,460 basehttp 224 126784268924608 "GET /login/?next=/configuracion/empresas/ HTTP/1.1" 200 4529
+INFO 2025-08-26 13:26:00,140 basehttp 224 126784268924608 "POST /login/ HTTP/1.1" 302 0
+INFO 2025-08-26 13:26:00,177 basehttp 224 126784268924608 "GET /configuracion/empresas/ HTTP/1.1" 200 34596
+WARNING 2025-08-26 13:26:04,461 log 224 126784268924608 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-08-26 13:26:04,462 basehttp 224 126784268924608 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5669
+INFO 2025-08-26 13:26:16,262 basehttp 224 126784268924608 "POST /api/empresas/empresas/ HTTP/1.1" 201 115
+INFO 2025-08-26 13:26:18,751 basehttp 224 126784268924608 "GET /configuracion/empresas/ HTTP/1.1" 200 36666
+WARNING 2025-08-26 13:26:18,799 log 224 126784268924608 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-08-26 13:26:18,800 basehttp 224 126784268924608 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5669
+INFO 2025-08-26 13:26:33,007 basehttp 224 126784268924608 "GET /configuracion/ HTTP/1.1" 200 24938
+INFO 2025-08-26 13:26:37,086 basehttp 224 126784268924608 "GET /configuracion/empresas/ HTTP/1.1" 200 36666
+INFO 2025-08-26 13:27:56,294 basehttp 224 126784268924608 "GET /seleccionar-empresa/ HTTP/1.1" 200 20554
+INFO 2025-08-26 13:28:03,079 basehttp 224 126784268924608 "POST /api/empresas/multiempresa/cambiar_empresa/ HTTP/1.1" 200 192
+INFO 2025-08-26 13:28:03,113 basehttp 224 126784260531904 "POST /api/empresas/multiempresa/cambiar_empresa/ HTTP/1.1" 200 192
+INFO 2025-08-26 13:28:04,637 basehttp 224 126784260531904 "GET / HTTP/1.1" 200 21585
+INFO 2025-08-26 13:28:04,672 basehttp 224 126784268924608 "GET / HTTP/1.1" 200 21585
+WARNING 2025-08-26 13:28:04,874 log 224 126784260531904 Not Found: /api/reportes/charts/balance-cuentas/
+WARNING 2025-08-26 13:28:04,875 basehttp 224 126784260531904 "GET /api/reportes/charts/balance-cuentas/ HTTP/1.1" 404 10729
+WARNING 2025-08-26 13:28:04,879 log 224 126784268924608 Not Found: /api/reportes/charts/ingresos-gastos/
+WARNING 2025-08-26 13:28:04,880 basehttp 224 126784268924608 "GET /api/reportes/charts/ingresos-gastos/ HTTP/1.1" 404 10729
+INFO 2025-08-26 13:28:07,140 basehttp 224 126784268924608 "GET /catalogo/ HTTP/1.1" 200 48363
+INFO 2025-08-26 13:28:07,454 basehttp 224 126784268924608 "GET /api/catalogo/cuentas/ HTTP/1.1" 200 52
+INFO 2025-08-26 13:28:17,245 basehttp 224 126784268924608 "GET /configuracion/ HTTP/1.1" 200 24936
+INFO 2025-08-26 13:28:18,450 basehttp 224 126784268924608 "GET /configuracion/catalogo/ HTTP/1.1" 200 35992
+ERROR 2025-08-26 13:28:23,851 log 224 126784268924608 Internal Server Error: /api/catalogo/aplicar-plantilla/
+ERROR 2025-08-26 13:28:23,852 basehttp 224 126784268924608 "POST /api/catalogo/aplicar-plantilla/ HTTP/1.1" 500 104
+INFO 2025-08-26 13:28:48,575 autoreload 224 126784783170432 /app/apps/catalogo_cuentas/views.py changed, reloading.
+INFO 2025-08-26 13:28:49,885 autoreload 237 138728863943552 Watching for file changes with StatReloader
+INFO 2025-08-26 13:29:05,770 basehttp 237 138728349628096 "GET /configuracion/catalogo/ HTTP/1.1" 302 0
+INFO 2025-08-26 13:29:05,782 basehttp 237 138728349628096 "GET /login/?next=/configuracion/catalogo/ HTTP/1.1" 200 4529
+INFO 2025-08-26 13:29:13,406 basehttp 237 138728349628096 "POST /login/ HTTP/1.1" 302 0
+INFO 2025-08-26 13:29:13,447 basehttp 237 138728349628096 "GET /configuracion/catalogo/ HTTP/1.1" 200 35993
+ERROR 2025-08-26 13:29:17,484 log 237 138728349628096 Internal Server Error: /api/catalogo/aplicar-plantilla/
+ERROR 2025-08-26 13:29:17,485 basehttp 237 138728349628096 "POST /api/catalogo/aplicar-plantilla/ HTTP/1.1" 500 478
+INFO 2025-08-26 13:33:04,527 autoreload 237 138728863943552 /app/apps/core/views.py changed, reloading.
+INFO 2025-08-26 13:33:05,724 autoreload 248 137957565840256 Watching for file changes with StatReloader
+INFO 2025-08-26 13:36:13,700 autoreload 248 137957565840256 /app/apps/empresas/views.py changed, reloading.
+INFO 2025-08-26 13:36:14,878 autoreload 257 125720574036864 Watching for file changes with StatReloader
+INFO 2025-08-26 13:36:39,215 autoreload 257 125720574036864 /app/apps/empresas/middleware.py changed, reloading.
+INFO 2025-08-26 13:36:40,475 autoreload 266 138261607467904 Watching for file changes with StatReloader
+INFO 2025-08-26 13:39:06,415 basehttp 266 138261092628160 "GET /configuracion/catalogo/ HTTP/1.1" 302 0
+INFO 2025-08-26 13:39:06,430 basehttp 266 138261092628160 "GET /login/?next=/configuracion/catalogo/ HTTP/1.1" 200 4529
+INFO 2025-08-26 13:39:16,320 basehttp 266 138261092628160 "POST /login/ HTTP/1.1" 302 0
+INFO 2025-08-26 13:39:16,372 basehttp 266 138261092628160 "GET /configuracion/catalogo/ HTTP/1.1" 200 35993
+INFO 2025-08-26 13:39:23,188 basehttp 266 138261092628160 "GET / HTTP/1.1" 200 27532
+WARNING 2025-08-26 13:39:23,328 log 266 138261084235456 Not Found: /api/reportes/charts/balance-cuentas/
+WARNING 2025-08-26 13:39:23,328 basehttp 266 138261084235456 "GET /api/reportes/charts/balance-cuentas/ HTTP/1.1" 404 10729
+WARNING 2025-08-26 13:39:23,332 log 266 138261092628160 Not Found: /api/reportes/charts/ingresos-gastos/
+WARNING 2025-08-26 13:39:23,333 basehttp 266 138261092628160 "GET /api/reportes/charts/ingresos-gastos/ HTTP/1.1" 404 10729
+INFO 2025-08-26 13:39:25,467 basehttp 266 138261092628160 "GET /configuracion/ HTTP/1.1" 200 24938
+INFO 2025-08-26 13:39:39,595 basehttp 266 138261092628160 "GET /seleccionar-empresa/ HTTP/1.1" 200 20555
+INFO 2025-08-26 13:39:44,829 basehttp 266 138261084235456 "POST /api/empresas/multiempresa/cambiar_empresa/ HTTP/1.1" 200 192
+INFO 2025-08-26 13:39:44,878 basehttp 266 138261092628160 "POST /api/empresas/multiempresa/cambiar_empresa/ HTTP/1.1" 200 192
+INFO 2025-08-26 13:39:46,380 basehttp 266 138261092628160 "GET / HTTP/1.1" 200 21585
+INFO 2025-08-26 13:39:46,429 basehttp 266 138261092628160 "GET / HTTP/1.1" 200 21585
+WARNING 2025-08-26 13:39:46,625 log 266 138261092628160 Not Found: /api/reportes/charts/ingresos-gastos/
+WARNING 2025-08-26 13:39:46,627 log 266 138261084235456 Not Found: /api/reportes/charts/balance-cuentas/
+WARNING 2025-08-26 13:39:46,628 basehttp 266 138261092628160 "GET /api/reportes/charts/ingresos-gastos/ HTTP/1.1" 404 10729
+WARNING 2025-08-26 13:39:46,628 basehttp 266 138261084235456 "GET /api/reportes/charts/balance-cuentas/ HTTP/1.1" 404 10729
+INFO 2025-08-26 13:40:24,364 basehttp 266 138261084235456 "GET /seleccionar-empresa/ HTTP/1.1" 200 20555
+INFO 2025-08-26 13:40:26,393 basehttp 266 138261084235456 "POST /api/empresas/multiempresa/cambiar_empresa/ HTTP/1.1" 200 192
+INFO 2025-08-26 13:40:26,434 basehttp 266 138261092628160 "POST /api/empresas/multiempresa/cambiar_empresa/ HTTP/1.1" 200 192
+INFO 2025-08-26 13:40:27,955 basehttp 266 138261092628160 "GET / HTTP/1.1" 200 21585
+INFO 2025-08-26 13:40:27,989 basehttp 266 138261084235456 "GET / HTTP/1.1" 200 21585
+WARNING 2025-08-26 13:40:28,181 log 266 138261084235456 Not Found: /api/reportes/charts/ingresos-gastos/
+WARNING 2025-08-26 13:40:28,184 log 266 138261092628160 Not Found: /api/reportes/charts/balance-cuentas/
+WARNING 2025-08-26 13:40:28,184 basehttp 266 138261084235456 "GET /api/reportes/charts/ingresos-gastos/ HTTP/1.1" 404 10729
+WARNING 2025-08-26 13:40:28,185 basehttp 266 138261092628160 "GET /api/reportes/charts/balance-cuentas/ HTTP/1.1" 404 10729
+INFO 2025-08-26 13:51:08,455 basehttp 266 138261084235456 "GET /configuracion/catalogo/ HTTP/1.1" 302 0
+INFO 2025-08-26 13:54:44,098 basehttp 266 138261084235456 "GET / HTTP/1.1" 200 21585
+WARNING 2025-08-26 13:54:44,232 log 266 138261092628160 Not Found: /api/reportes/charts/balance-cuentas/
+WARNING 2025-08-26 13:54:44,233 basehttp 266 138261092628160 "GET /api/reportes/charts/balance-cuentas/ HTTP/1.1" 404 10729
+WARNING 2025-08-26 13:54:44,235 log 266 138261084235456 Not Found: /api/reportes/charts/ingresos-gastos/
+WARNING 2025-08-26 13:54:44,236 basehttp 266 138261084235456 "GET /api/reportes/charts/ingresos-gastos/ HTTP/1.1" 404 10729
+INFO 2025-08-26 13:54:48,853 basehttp 266 138261084235456 "GET /configuracion/ HTTP/1.1" 200 24936
+INFO 2025-08-26 13:55:04,576 basehttp 266 138261084235456 "GET /seleccionar-empresa/ HTTP/1.1" 200 20555
+INFO 2025-08-26 13:55:06,761 basehttp 266 138261084235456 "POST /api/empresas/multiempresa/cambiar_empresa/ HTTP/1.1" 200 192
+INFO 2025-08-26 13:55:06,785 basehttp 266 138261092628160 "POST /api/empresas/multiempresa/cambiar_empresa/ HTTP/1.1" 200 192
+INFO 2025-08-26 13:55:08,382 basehttp 266 138261092628160 "GET / HTTP/1.1" 200 21585
+INFO 2025-08-26 13:55:08,398 basehttp 266 138261084235456 "GET / HTTP/1.1" 200 21585
+WARNING 2025-08-26 13:55:08,737 log 266 138261084235456 Not Found: /api/reportes/charts/ingresos-gastos/
+WARNING 2025-08-26 13:55:08,738 log 266 138261073745600 Not Found: /api/reportes/charts/balance-cuentas/
+WARNING 2025-08-26 13:55:08,740 basehttp 266 138261073745600 "GET /api/reportes/charts/balance-cuentas/ HTTP/1.1" 404 10729
+WARNING 2025-08-26 13:55:08,740 basehttp 266 138261084235456 "GET /api/reportes/charts/ingresos-gastos/ HTTP/1.1" 404 10729
+INFO 2025-08-26 13:55:19,678 basehttp 266 138261073745600 "GET /seleccionar-empresa/ HTTP/1.1" 200 20555
+WARNING 2025-08-26 13:55:21,838 log 266 138261073745600 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-08-26 13:55:21,839 basehttp 266 138261073745600 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5669
+INFO 2025-08-26 13:55:23,362 basehttp 266 138261073745600 "POST /api/empresas/multiempresa/cambiar_empresa/ HTTP/1.1" 200 192
+INFO 2025-08-26 13:55:23,400 basehttp 266 138261084235456 "POST /api/empresas/multiempresa/cambiar_empresa/ HTTP/1.1" 200 192
+INFO 2025-08-26 13:55:24,911 basehttp 266 138261084235456 "GET / HTTP/1.1" 200 21585
+INFO 2025-08-26 13:55:24,947 basehttp 266 138261073745600 "GET / HTTP/1.1" 200 21585
+WARNING 2025-08-26 13:55:24,987 log 266 138261073745600 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-08-26 13:55:24,987 basehttp 266 138261073745600 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5669
+WARNING 2025-08-26 13:55:25,219 log 266 138261073745600 Not Found: /api/reportes/charts/ingresos-gastos/
+WARNING 2025-08-26 13:55:25,221 log 266 138261084235456 Not Found: /api/reportes/charts/balance-cuentas/
+WARNING 2025-08-26 13:55:25,222 basehttp 266 138261073745600 "GET /api/reportes/charts/ingresos-gastos/ HTTP/1.1" 404 10729
+WARNING 2025-08-26 13:55:25,223 basehttp 266 138261084235456 "GET /api/reportes/charts/balance-cuentas/ HTTP/1.1" 404 10729
+INFO 2025-08-26 13:56:28,194 autoreload 266 138261607467904 /app/apps/core/views.py changed, reloading.
+INFO 2025-08-26 13:56:29,532 autoreload 283 128266909322112 Watching for file changes with StatReloader
+INFO 2025-08-26 13:56:47,711 basehttp 283 128266393351872 "GET /configuracion/catalogo/ HTTP/1.1" 302 0
+INFO 2025-08-26 13:56:47,725 basehttp 283 128266393351872 "GET /login/?next=/configuracion/catalogo/ HTTP/1.1" 200 4529
+INFO 2025-08-26 13:56:56,202 basehttp 283 128266393351872 "POST /login/ HTTP/1.1" 302 0
+INFO 2025-08-26 13:56:56,218 basehttp 283 128266393351872 "GET /configuracion/catalogo/ HTTP/1.1" 302 0
+INFO 2025-08-26 13:56:56,292 basehttp 283 128266393351872 "GET /seleccionar-empresa/ HTTP/1.1" 200 19620
+WARNING 2025-08-26 13:57:28,804 log 283 128266393351872 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-08-26 13:57:28,805 basehttp 283 128266393351872 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5669
+INFO 2025-08-26 13:58:34,477 basehttp 283 128266393351872 "POST /api/empresas/multiempresa/cambiar_empresa/ HTTP/1.1" 200 192
+INFO 2025-08-26 13:58:34,512 basehttp 283 128266312611520 "POST /api/empresas/multiempresa/cambiar_empresa/ HTTP/1.1" 200 192
+INFO 2025-08-26 13:58:36,068 basehttp 283 128266312611520 "GET / HTTP/1.1" 200 21585
+INFO 2025-08-26 13:58:36,082 basehttp 283 128266393351872 "GET / HTTP/1.1" 200 21585
+WARNING 2025-08-26 13:58:36,121 log 283 128266393351872 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-08-26 13:58:36,122 basehttp 283 128266393351872 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5669
+WARNING 2025-08-26 13:58:36,318 log 283 128266393351872 Not Found: /api/reportes/charts/ingresos-gastos/
+WARNING 2025-08-26 13:58:36,319 basehttp 283 128266393351872 "GET /api/reportes/charts/ingresos-gastos/ HTTP/1.1" 404 10729
+WARNING 2025-08-26 13:58:36,325 log 283 128266312611520 Not Found: /api/reportes/charts/balance-cuentas/
+WARNING 2025-08-26 13:58:36,326 basehttp 283 128266312611520 "GET /api/reportes/charts/balance-cuentas/ HTTP/1.1" 404 10729
+INFO 2025-08-26 14:01:05,829 autoreload 283 128266909322112 /app/config/settings/base.py changed, reloading.
+INFO 2025-08-26 14:01:07,166 autoreload 296 128564819438464 Watching for file changes with StatReloader
+INFO 2025-08-26 14:01:31,912 autoreload 7 129098271841152 Watching for file changes with StatReloader
+INFO 2025-08-26 14:03:51,951 basehttp 7 129097757882048 "GET /seleccionar-empresa/ HTTP/1.1" 302 0
+INFO 2025-08-26 14:03:51,963 basehttp 7 129097757882048 "GET /login/?next=/seleccionar-empresa/ HTTP/1.1" 200 4526
+INFO 2025-08-26 14:04:05,955 basehttp 7 129097757882048 "POST /login/ HTTP/1.1" 302 0
+INFO 2025-08-26 14:04:06,043 basehttp 7 129097757882048 "GET /seleccionar-empresa/ HTTP/1.1" 200 19620
+WARNING 2025-08-26 14:04:10,025 log 7 129097757882048 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-08-26 14:04:10,026 basehttp 7 129097757882048 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5669
+INFO 2025-08-26 14:04:12,385 basehttp 7 129097749489344 "POST /api/empresas/multiempresa/cambiar_empresa/ HTTP/1.1" 200 192
+INFO 2025-08-26 14:04:12,413 basehttp 7 129097757882048 "POST /api/empresas/multiempresa/cambiar_empresa/ HTTP/1.1" 200 192
+INFO 2025-08-26 14:04:14,047 basehttp 7 129097757882048 "GET / HTTP/1.1" 200 21585
+INFO 2025-08-26 14:04:14,086 basehttp 7 129097749489344 "GET / HTTP/1.1" 200 21585
+WARNING 2025-08-26 14:04:14,168 log 7 129097749489344 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-08-26 14:04:14,168 basehttp 7 129097749489344 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5669
+WARNING 2025-08-26 14:04:14,405 log 7 129097740048064 Not Found: /api/reportes/charts/balance-cuentas/
+WARNING 2025-08-26 14:04:14,407 basehttp 7 129097740048064 "GET /api/reportes/charts/balance-cuentas/ HTTP/1.1" 404 10729
+WARNING 2025-08-26 14:04:14,433 log 7 129097749489344 Not Found: /api/reportes/charts/ingresos-gastos/
+WARNING 2025-08-26 14:04:14,435 basehttp 7 129097749489344 "GET /api/reportes/charts/ingresos-gastos/ HTTP/1.1" 404 10729
+INFO 2025-08-26 14:04:32,215 basehttp 7 129097749489344 "GET /configuracion/catalogo/ HTTP/1.1" 200 35992
+INFO 2025-08-26 14:04:56,635 basehttp 7 129097749489344 "GET /seleccionar-empresa/ HTTP/1.1" 200 20555
+INFO 2025-08-26 14:04:58,655 basehttp 7 129097749489344 "POST /api/empresas/multiempresa/cambiar_empresa/ HTTP/1.1" 200 192
+INFO 2025-08-26 14:04:58,682 basehttp 7 129097740048064 "POST /api/empresas/multiempresa/cambiar_empresa/ HTTP/1.1" 200 192
+INFO 2025-08-26 14:05:00,261 basehttp 7 129097740048064 "GET / HTTP/1.1" 200 21585
+INFO 2025-08-26 14:05:00,301 basehttp 7 129097749489344 "GET / HTTP/1.1" 200 21585
+WARNING 2025-08-26 14:05:00,591 log 7 129097757882048 Not Found: /api/reportes/charts/balance-cuentas/
+WARNING 2025-08-26 14:05:00,592 basehttp 7 129097757882048 "GET /api/reportes/charts/balance-cuentas/ HTTP/1.1" 404 10729
+WARNING 2025-08-26 14:05:00,619 log 7 129097749489344 Not Found: /api/reportes/charts/ingresos-gastos/
+WARNING 2025-08-26 14:05:00,620 basehttp 7 129097749489344 "GET /api/reportes/charts/ingresos-gastos/ HTTP/1.1" 404 10729
+WARNING 2025-08-26 14:05:03,320 log 7 129097749489344 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-08-26 14:05:03,321 basehttp 7 129097749489344 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5669
+INFO 2025-08-26 14:06:03,521 basehttp 7 129097749489344 "GET /configuracion/catalogo/ HTTP/1.1" 200 35992
+INFO 2025-08-26 14:06:19,874 basehttp 7 129097749489344 "GET /seleccionar-empresa/ HTTP/1.1" 200 20555
+INFO 2025-08-26 14:06:21,838 basehttp 7 129097749489344 "POST /api/empresas/multiempresa/cambiar_empresa/ HTTP/1.1" 200 192
+INFO 2025-08-26 14:06:21,866 basehttp 7 129097757882048 "POST /api/empresas/multiempresa/cambiar_empresa/ HTTP/1.1" 200 192
+INFO 2025-08-26 14:06:23,456 basehttp 7 129097757882048 "GET / HTTP/1.1" 200 21585
+INFO 2025-08-26 14:06:23,484 basehttp 7 129097749489344 "GET / HTTP/1.1" 200 21585
+WARNING 2025-08-26 14:06:23,721 log 7 129097749489344 Not Found: /api/reportes/charts/ingresos-gastos/
+WARNING 2025-08-26 14:06:23,722 basehttp 7 129097749489344 "GET /api/reportes/charts/ingresos-gastos/ HTTP/1.1" 404 10729
+WARNING 2025-08-26 14:06:23,749 log 7 129097740048064 Not Found: /api/reportes/charts/balance-cuentas/
+WARNING 2025-08-26 14:06:23,749 basehttp 7 129097740048064 "GET /api/reportes/charts/balance-cuentas/ HTTP/1.1" 404 10729
+INFO 2025-08-26 16:36:44,771 basehttp 7 129097749489344 "GET /configuracion/catalogo/ HTTP/1.1" 302 0
+INFO 2025-08-26 16:36:44,805 basehttp 7 129097749489344 "GET /login/?next=/configuracion/catalogo/ HTTP/1.1" 200 4529
+INFO 2025-08-26 16:36:57,348 basehttp 7 129097749489344 "POST /login/ HTTP/1.1" 302 0
+INFO 2025-08-26 16:36:57,419 basehttp 7 129097749489344 "GET /configuracion/catalogo/ HTTP/1.1" 302 0
+INFO 2025-08-26 16:36:57,551 basehttp 7 129097749489344 "GET /seleccionar-empresa/ HTTP/1.1" 200 19629
+INFO 2025-08-26 16:36:59,847 basehttp 7 129097749489344 "POST /api/empresas/multiempresa/cambiar_empresa/ HTTP/1.1" 200 192
+INFO 2025-08-26 16:36:59,885 basehttp 7 129097740048064 "POST /api/empresas/multiempresa/cambiar_empresa/ HTTP/1.1" 200 192
+INFO 2025-08-26 16:37:01,573 basehttp 7 129097749489344 "GET / HTTP/1.1" 200 21585
+INFO 2025-08-26 16:37:01,601 basehttp 7 129097740048064 "GET / HTTP/1.1" 200 21585
+WARNING 2025-08-26 16:37:01,848 log 7 129097740048064 Not Found: /api/reportes/charts/ingresos-gastos/
+WARNING 2025-08-26 16:37:01,849 basehttp 7 129097740048064 "GET /api/reportes/charts/ingresos-gastos/ HTTP/1.1" 404 10729
+WARNING 2025-08-26 16:37:01,876 log 7 129097749489344 Not Found: /api/reportes/charts/balance-cuentas/
+WARNING 2025-08-26 16:37:01,877 basehttp 7 129097749489344 "GET /api/reportes/charts/balance-cuentas/ HTTP/1.1" 404 10729
+INFO 2025-08-26 16:37:08,422 basehttp 7 129097749489344 "GET /transacciones/ HTTP/1.1" 200 30984
+INFO 2025-08-26 16:37:10,440 basehttp 7 129097749489344 "GET /catalogo/ HTTP/1.1" 200 48363
+INFO 2025-08-26 16:37:10,677 basehttp 7 129097749489344 "GET /api/catalogo/cuentas/ HTTP/1.1" 200 52
+INFO 2025-08-26 16:37:20,076 basehttp 7 129097749489344 "GET /configuracion/ HTTP/1.1" 200 24936
+INFO 2025-08-26 16:37:21,286 basehttp 7 129097749489344 "GET /configuracion/catalogo/ HTTP/1.1" 200 35992
+INFO 2025-08-26 16:37:27,515 basehttp 7 129097749489344 "POST /api/catalogo/aplicar-plantilla/ HTTP/1.1" 200 106
+INFO 2025-08-26 16:37:32,384 basehttp 7 129097749489344 "GET /catalogo/ HTTP/1.1" 200 103061
+INFO 2025-08-26 16:37:32,631 basehttp 7 129097749489344 "GET /api/catalogo/cuentas/ HTTP/1.1" 200 4544
+INFO 2025-08-26 16:41:11,305 autoreload 7 129098271841152 /app/apps/core/views.py changed, reloading.
+INFO 2025-08-26 16:41:13,149 autoreload 24 128428837661568 Watching for file changes with StatReloader
+INFO 2025-08-26 16:41:25,937 autoreload 24 128428837661568 /app/apps/empresas/middleware.py changed, reloading.
+INFO 2025-08-26 16:41:27,264 autoreload 33 131090536098688 Watching for file changes with StatReloader
+INFO 2025-08-26 16:42:06,551 autoreload 33 131090536098688 /app/apps/empresas/views.py changed, reloading.
+INFO 2025-08-26 16:42:07,788 autoreload 42 128912857406336 Watching for file changes with StatReloader
+INFO 2025-08-26 16:42:22,794 autoreload 42 128912857406336 /app/apps/core/views.py changed, reloading.
+INFO 2025-08-26 16:42:23,939 autoreload 51 138470005062528 Watching for file changes with StatReloader
